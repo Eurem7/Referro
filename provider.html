@@ -1,1 +1,288 @@
 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Provider Profile — Referro</title>
+  <link rel="stylesheet" href="assets/css/style.css" />
+  <style>
+
+    /* ── PROFILE BANNER ── */
+    .profile-banner {
+      height: 200px;
+      background: linear-gradient(120deg, #060E1E, #1453FF);
+      position: relative; margin-top: 66px;
+    }
+    .profile-banner-pat {
+      position: absolute; inset: 0; opacity: .12;
+      background-image: repeating-linear-gradient(45deg, rgba(255,255,255,.15) 0, rgba(255,255,255,.15) 1px, transparent 0, transparent 50%);
+      background-size: 12px 12px;
+    }
+
+    .profile-wrap { max-width: 1100px; margin: 0 auto; padding: 0 5%; }
+
+    .profile-identity {
+      display: flex; align-items: flex-end; justify-content: space-between;
+      flex-wrap: wrap; gap: 1rem;
+      padding-bottom: 1.75rem; border-bottom: 1px solid var(--line);
+      transform: translateY(-40px); margin-bottom: -20px;
+    }
+
+    .profile-left { display: flex; align-items: flex-end; gap: 1.25rem; }
+
+    .profile-avatar {
+      width: 100px; height: 100px; border-radius: 50%;
+      border: 4px solid #fff; background: var(--blue-ghost);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 2.5rem; flex-shrink: 0;
+      box-shadow: 0 4px 20px rgba(0,0,0,.1);
+    }
+
+    .profile-info { padding-bottom: .5rem; }
+    .profile-name { font-family: 'Clash Display', sans-serif; font-size: 1.6rem; font-weight: 700; color: var(--ink); letter-spacing: -.02em; }
+    .profile-role { font-size: .88rem; color: var(--blue); font-weight: 600; margin-top: .2rem; }
+    .profile-meta { display: flex; align-items: center; gap: 1rem; margin-top: .6rem; flex-wrap: wrap; }
+    .profile-meta-item { display: flex; align-items: center; gap: .3rem; font-size: .82rem; color: var(--slate); }
+    .profile-verified { display: flex; align-items: center; gap: .3rem; background: var(--success-bg); color: var(--success); padding: .22rem .65rem; border-radius: 6px; font-size: .75rem; font-weight: 700; }
+
+    .profile-actions { display: flex; gap: .65rem; padding-bottom: .5rem; flex-wrap: wrap; }
+
+    /* ── LAYOUT ── */
+    .profile-layout { display: grid; grid-template-columns: 1fr 320px; gap: 2rem; padding: 2rem 0 5rem; }
+
+    .section-block { margin-bottom: 2.25rem; }
+    .block-title { font-family: 'Clash Display', sans-serif; font-size: 1rem; font-weight: 700; color: var(--ink); margin-bottom: 1rem; padding-bottom: .6rem; border-bottom: 1px solid var(--line); }
+    .about-text { font-size: .9rem; color: var(--slate); line-height: 1.8; }
+
+    .skills-wrap { display: flex; flex-wrap: wrap; gap: .5rem; }
+    .skill-tag { padding: .35rem .85rem; border-radius: 100px; background: var(--blue-ghost); color: var(--blue); font-size: .8rem; font-weight: 600; border: 1px solid var(--blue-pale); }
+
+    .avail-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: .4rem; }
+    .avail-day { text-align: center; border-radius: 10px; padding: .6rem .3rem; border: 1.5px solid var(--line); }
+    .avail-day.on { border-color: var(--blue); background: var(--blue-ghost); }
+    .avail-day-name { font-size: .68rem; font-weight: 700; color: var(--slate-lt); text-transform: uppercase; letter-spacing: .06em; }
+    .avail-day.on .avail-day-name { color: var(--blue); }
+    .avail-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--line); margin: .4rem auto 0; }
+    .avail-day.on .avail-dot { background: var(--blue); }
+
+    .empty-reviews { text-align: center; padding: 2.5rem; background: var(--blue-ghost); border-radius: var(--radius-lg); border: 1.5px dashed var(--blue-pale); }
+    .empty-reviews p { font-size: .88rem; color: var(--slate); margin-top: .4rem; }
+
+    /* ── BOOKING CARD ── */
+    .sticky-card { position: sticky; top: 86px; }
+    .booking-card { background: var(--white); border: 1.5px solid var(--line); border-radius: var(--radius-xl); padding: 1.75rem; box-shadow: var(--shadow-md); }
+    .booking-rate { margin-bottom: 1.25rem; }
+    .booking-rate-num { font-family: 'Clash Display', sans-serif; font-size: 1.75rem; font-weight: 700; color: var(--ink); }
+    .booking-rate-unit { font-size: .82rem; color: var(--slate-lt); }
+
+    .booking-form { display: flex; flex-direction: column; gap: .75rem; }
+    .form-field { display: flex; flex-direction: column; gap: .35rem; }
+    .form-label { font-size: .78rem; font-weight: 600; color: var(--ink); }
+    .form-input, .form-select, .form-textarea { border: 1.5px solid var(--line); border-radius: 10px; padding: .65rem .9rem; font-family: 'Plus Jakarta Sans', sans-serif; font-size: .86rem; color: var(--ink); outline: none; transition: border-color .18s; background: var(--white); }
+    .form-input:focus, .form-select:focus, .form-textarea:focus { border-color: var(--blue); }
+    .form-textarea { resize: vertical; min-height: 90px; }
+
+    .booking-btn { width: 100%; padding: .85rem; border-radius: 11px; border: none; background: var(--blue); color: #fff; font-family: 'Plus Jakarta Sans', sans-serif; font-size: .9rem; font-weight: 600; cursor: pointer; transition: all .18s; box-shadow: 0 4px 16px rgba(20,83,255,.3); margin-top: .25rem; }
+    .booking-btn:hover { background: var(--blue-h); transform: translateY(-1px); }
+
+    .booking-note { display: flex; align-items: center; gap: .4rem; justify-content: center; margin-top: .85rem; font-size: .75rem; color: var(--slate-lt); }
+    .booking-divider { height: 1px; background: var(--line); margin: 1.25rem 0; }
+
+    .booking-details { display: flex; flex-direction: column; gap: .7rem; }
+    .bd-row { display: flex; justify-content: space-between; align-items: center; font-size: .83rem; }
+    .bd-label { color: var(--slate); }
+    .bd-value { font-weight: 600; color: var(--ink); }
+
+    .contact-card { background: var(--blue-ghost); border: 1.5px solid var(--blue-pale); border-radius: var(--radius-lg); padding: 1.25rem; margin-top: 1rem; }
+    .contact-card-title { font-family: 'Clash Display', sans-serif; font-size: .88rem; font-weight: 700; color: var(--ink); margin-bottom: .9rem; }
+    .contact-methods { display: flex; flex-direction: column; gap: .55rem; }
+    .contact-method { display: flex; align-items: center; gap: .6rem; font-size: .82rem; color: var(--slate); }
+    .contact-icon { width: 30px; height: 30px; border-radius: 8px; background: var(--white); border: 1px solid var(--line); display: flex; align-items: center; justify-content: center; font-size: .85rem; flex-shrink: 0; }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 860px) {
+      .profile-layout { grid-template-columns: 1fr; }
+      .sticky-card { position: static; }
+      .avail-grid { grid-template-columns: repeat(4, 1fr); }
+    }
+    @media (max-width: 560px) {
+      .profile-identity { flex-direction: column; align-items: flex-start; }
+      .profile-actions { width: 100%; }
+      .profile-actions .btn { flex: 1; justify-content: center; }
+      .profile-avatar { width: 80px; height: 80px; font-size: 2rem; }
+      .profile-name { font-size: 1.3rem; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav id="nav">
+  <a class="logo" href="index.html"><span class="logo-dot"></span>Referro</a>
+  <ul class="nav-links">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="search.html">Services</a></li>
+    <li><a href="index.html#how">How It Works</a></li>
+    <li><a href="index.html#join">For Providers</a></li>
+  </ul>
+  <div class="nav-actions">
+    <a class="btn btn-ghost" href="#">Log in</a>
+    <a class="btn btn-blue" href="#">Get Started</a>
+  </div>
+</nav>
+
+<!-- BANNER -->
+<div class="profile-banner">
+  <div class="profile-banner-pat"></div>
+</div>
+
+<div class="profile-wrap">
+
+  <!-- IDENTITY -->
+  <div class="profile-identity">
+    <div class="profile-left">
+      <div class="profile-avatar" id="providerAvatar">👤</div>
+      <div class="profile-info">
+        <div class="profile-name" id="providerName">Provider Name</div>
+        <div class="profile-role" id="providerRole">Service Category</div>
+        <div class="profile-meta">
+          <div class="profile-verified">✓ ID Verified</div>
+          <div class="profile-meta-item" id="providerLocation">📍 Location</div>
+          <div class="profile-meta-item" id="providerJoined">🕐 Member since —</div>
+        </div>
+      </div>
+    </div>
+    <div class="profile-actions">
+      <a href="#booking" class="btn btn-blue btn-lg">Book Now</a>
+      <button class="btn btn-outline btn-lg">💬 Message</button>
+      <button class="btn btn-ghost btn-lg">↗ Share</button>
+    </div>
+  </div>
+
+  <!-- MAIN -->
+  <div class="profile-layout">
+
+    <!-- LEFT -->
+    <div>
+      <div class="section-block">
+        <div class="block-title">About</div>
+        <p class="about-text" id="providerBio">This provider hasn't added a bio yet.</p>
+      </div>
+
+      <div class="section-block">
+        <div class="block-title">Skills & Specialisations</div>
+        <div class="skills-wrap" id="providerSkills">
+          <span style="font-size:.85rem;color:var(--slate-lt)">No skills listed yet.</span>
+        </div>
+      </div>
+
+      <div class="section-block">
+        <div class="block-title">Weekly Availability</div>
+        <div class="avail-grid" id="availGrid"></div>
+      </div>
+
+      <div class="section-block">
+        <div class="block-title">Reviews</div>
+        <div class="empty-reviews">
+          <div style="font-size:1.5rem">💬</div>
+          <p>No reviews yet — be the first to book and leave a review!</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT -->
+    <div class="sticky-card" id="booking">
+      <div class="booking-card">
+        <div class="booking-rate">
+          <span class="booking-rate-num" id="providerRate">—</span>
+          <span class="booking-rate-unit"> / hour</span>
+        </div>
+
+        <div class="booking-form">
+          <div class="form-field">
+            <label class="form-label">Service needed</label>
+            <select class="form-select" id="serviceSelect">
+              <option value="">Select a service</option>
+            </select>
+          </div>
+          <div class="form-field">
+            <label class="form-label">Preferred date</label>
+            <input type="date" class="form-input" id="bookingDate" />
+          </div>
+          <div class="form-field">
+            <label class="form-label">Your address</label>
+            <input type="text" class="form-input" placeholder="Enter your address..." />
+          </div>
+          <div class="form-field">
+            <label class="form-label">Additional details</label>
+            <textarea class="form-textarea" placeholder="Describe what you need done..."></textarea>
+          </div>
+        </div>
+
+        <button class="booking-btn">Send Booking Request</button>
+        <div class="booking-note">🔒 No payment required at this stage</div>
+
+        <div class="booking-divider"></div>
+
+        <div class="booking-details">
+          <div class="bd-row"><span class="bd-label">Response time</span><span class="bd-value" id="providerResponse">—</span></div>
+          <div class="bd-row"><span class="bd-label">Availability</span><span class="bd-value" id="providerAvail">—</span></div>
+          <div class="bd-row"><span class="bd-label">Service area</span><span class="bd-value" id="providerArea">—</span></div>
+        </div>
+      </div>
+
+      <div class="contact-card">
+        <div class="contact-card-title">Contact Provider</div>
+        <div class="contact-methods">
+          <div class="contact-method"><div class="contact-icon">📞</div> Phone visible after booking</div>
+          <div class="contact-method"><div class="contact-icon">💬</div> Message via Referro chat</div>
+          <div class="contact-method"><div class="contact-icon">📧</div> Email after confirmation</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-top">
+    <div class="footer-logo"><span class="footer-logo-dot"></span>Referro</div>
+    <div class="footer-links">
+      <a href="index.html">Home</a>
+      <a href="search.html">Services</a>
+      <a href="index.html#how">How It Works</a>
+      <a href="index.html#join">For Providers</a>
+      <a href="#">Contact</a>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span>© 2025 Referro Technologies Ltd.</span>
+    <span style="display:flex;gap:1.5rem">
+      <a href="#">Privacy Policy</a>
+      <a href="#">Terms of Use</a>
+    </span>
+  </div>
+</footer>
+
+<script src="assets/js/main.js"></script>
+<script>
+  // Availability grid — days come from provider data via backend
+  // Replace `available` array with real data e.g. ['Mon','Tue','Wed']
+  const days = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+  const available = [];
+
+  const grid = document.getElementById('availGrid');
+  days.forEach(d => {
+    const el = document.createElement('div');
+    el.className = 'avail-day' + (available.includes(d) ? ' on' : '');
+    el.innerHTML = `<div class="avail-day-name">${d}</div><div class="avail-dot"></div>`;
+    grid.appendChild(el);
+  });
+
+  // Set min date on booking input to today
+  document.getElementById('bookingDate').min = new Date().toISOString().split('T')[0];
+</script>
+</body>
+</html>
