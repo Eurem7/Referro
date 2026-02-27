@@ -1,1 +1,368 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Browse Services — Referro</title>
+  <link rel="stylesheet" href="assets/css/style.css" />
+  <style>
+    /* ── PAGE HEADER ── */
+    .page-header {
+      background: var(--ink); padding: 110px 5% 60px;
+      position: relative; overflow: hidden;
+    }
+    .page-header-bg {
+      position: absolute; inset: 0;
+      background: radial-gradient(ellipse 70% 80% at 50% -20%, rgba(20,83,255,.32) 0%, transparent 65%);
+    }
+    .page-header-inner { position: relative; z-index: 2; max-width: 700px; }
+    .page-header h1 {
+      font-size: clamp(2rem, 4vw, 3.2rem); font-weight: 700;
+      letter-spacing: -.035em; color: #fff; line-height: 1.1; margin-bottom: 1rem;
+    }
+    .page-header p { font-size: .95rem; color: rgba(255,255,255,.45); line-height: 1.75; }
 
+    /* ── SEARCH BAR ── */
+    .search-bar-wrap {
+      background: var(--ink); padding: 0 5% 32px; position: relative; z-index: 10;
+    }
+    .search-bar {
+      display: flex; align-items: center; gap: 6px;
+      background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.1);
+      backdrop-filter: blur(16px); border-radius: 14px; padding: 5px;
+      box-shadow: 0 16px 50px rgba(0,0,0,.3);
+    }
+    .sb-field {
+      display: flex; align-items: center; gap: .5rem;
+      padding: 0 1rem; height: 50px; flex: 1;
+    }
+    .sb-field svg { color: rgba(255,255,255,.3); flex-shrink: 0; }
+    .sb-field input { border: none; background: transparent; outline: none; font-family: 'Plus Jakarta Sans', sans-serif; font-size: .88rem; color: #fff; width: 100%; }
+    .sb-field input::placeholder { color: rgba(255,255,255,.28); }
+    .sb-sep { width: 1px; height: 24px; background: rgba(255,255,255,.1); flex-shrink: 0; }
+    .sb-go { height: 50px; padding: 0 1.5rem; border-radius: 10px; border: none; background: var(--blue); color: #fff; font-family: 'Plus Jakarta Sans', sans-serif; font-size: .86rem; font-weight: 600; cursor: pointer; flex-shrink: 0; transition: all .18s; }
+    .sb-go:hover { background: var(--blue-h); transform: translateY(-1px); }
+
+    /* ── LAYOUT ── */
+    .browse-layout {
+      display: grid; grid-template-columns: 260px 1fr;
+      gap: 2rem; padding: 2.5rem 5%; align-items: start;
+    }
+
+    /* ── FILTERS SIDEBAR ── */
+    .filters { position: sticky; top: 86px; }
+    .filter-block { margin-bottom: 2rem; }
+    .filter-title { font-family: 'Clash Display', sans-serif; font-size: .85rem; font-weight: 600; color: var(--ink); margin-bottom: .9rem; }
+    .filter-options { display: flex; flex-direction: column; gap: .5rem; }
+
+    .filter-opt {
+      display: flex; align-items: center; gap: .6rem;
+      padding: .55rem .75rem; border-radius: 9px; border: 1.5px solid var(--line);
+      cursor: pointer; transition: all .18s; font-size: .84rem; color: var(--slate);
+      background: var(--white); user-select: none;
+    }
+    .filter-opt:hover { border-color: var(--blue); color: var(--ink); }
+    .filter-opt.active { border-color: var(--blue); background: var(--blue-ghost); color: var(--blue); font-weight: 600; }
+    .filter-opt-icon { font-size: 1rem; }
+    .filter-opt-count { margin-left: auto; font-size: .72rem; color: var(--slate-lt); }
+    .filter-opt.active .filter-opt-count { color: var(--blue); }
+
+    .filter-divider { height: 1px; background: var(--line); margin: 1.5rem 0; }
+
+    /* rating filter */
+    .rating-opts { display: flex; flex-direction: column; gap: .4rem; }
+    .rating-opt { display: flex; align-items: center; gap: .5rem; cursor: pointer; padding: .4rem .5rem; border-radius: 8px; transition: background .18s; }
+    .rating-opt:hover { background: var(--blue-ghost); }
+    .rating-opt input { accent-color: var(--blue); width: 15px; height: 15px; }
+    .rating-opt label { font-size: .83rem; color: var(--slate); cursor: pointer; display: flex; align-items: center; gap: .35rem; }
+    .stars-y { color: #F59E0B; font-size: .8rem; }
+
+    /* price range */
+    .price-range input[type=range] { width: 100%; accent-color: var(--blue); margin-top: .4rem; }
+    .price-labels { display: flex; justify-content: space-between; font-size: .75rem; color: var(--slate-lt); margin-top: .3rem; }
+
+    .filter-reset { display: flex; align-items: center; justify-content: center; gap: .35rem; width: 100%; padding: .55rem; border-radius: 9px; border: 1.5px solid var(--line); background: transparent; font-family: 'Plus Jakarta Sans', sans-serif; font-size: .82rem; font-weight: 600; color: var(--slate); cursor: pointer; transition: all .18s; margin-top: .5rem; }
+    .filter-reset:hover { border-color: var(--ink); color: var(--ink); }
+
+    /* ── RESULTS AREA ── */
+    .results-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem; }
+    .results-meta { font-size: .85rem; color: var(--slate); }
+    .results-meta strong { color: var(--ink); font-weight: 600; }
+
+    .sort-wrap { display: flex; align-items: center; gap: .5rem; }
+    .sort-wrap label { font-size: .82rem; color: var(--slate); white-space: nowrap; }
+    .sort-select { border: 1.5px solid var(--line); border-radius: 9px; padding: .45rem .8rem; font-family: 'Plus Jakarta Sans', sans-serif; font-size: .82rem; color: var(--ink); outline: none; cursor: pointer; background: var(--white); }
+    .sort-select:focus { border-color: var(--blue); }
+
+    /* ── PROVIDER CARDS ── */
+    .provider-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.1rem; }
+
+    .prov-card {
+      background: var(--white); border: 1.5px solid var(--line);
+      border-radius: var(--radius-lg); overflow: hidden;
+      cursor: pointer; transition: all .22s; text-decoration: none; display: block;
+    }
+    .prov-card:hover { transform: translateY(-4px); box-shadow: 0 16px 40px rgba(20,83,255,.1); border-color: var(--blue); }
+
+    .prov-banner { height: 72px; position: relative; }
+    .pb-1 { background: linear-gradient(120deg, #060E1E, #1453FF); }
+    .pb-2 { background: linear-gradient(120deg, #0D2045, #2563EB); }
+    .pb-3 { background: linear-gradient(120deg, #1a1a2e, #1453FF); }
+    .pb-4 { background: linear-gradient(120deg, #0a1628, #1E6FBF); }
+    .prov-banner-pat { position: absolute; inset: 0; opacity: .12; background-image: repeating-linear-gradient(45deg, rgba(255,255,255,.15) 0, rgba(255,255,255,.15) 1px, transparent 0, transparent 50%); background-size: 10px 10px; }
+    .prov-av { width: 56px; height: 56px; border-radius: 50%; border: 3px solid #fff; background: var(--blue-pale); display: flex; align-items: center; justify-content: center; font-family: 'Clash Display', sans-serif; font-size: 1.1rem; font-weight: 700; color: var(--blue); position: absolute; bottom: -28px; left: 1.25rem; box-shadow: 0 3px 10px rgba(0,0,0,.1); }
+
+    .prov-body { padding: 2rem 1.25rem 1.25rem; }
+    .prov-top-row { display: flex; justify-content: space-between; align-items: flex-start; gap: .5rem; }
+    .prov-name { font-family: 'Clash Display', sans-serif; font-size: .97rem; font-weight: 600; color: var(--ink); }
+    .prov-role { font-size: .76rem; color: var(--blue); font-weight: 600; margin-top: .18rem; }
+
+    .prov-stars { display: flex; align-items: center; gap: .28rem; margin-top: .75rem; }
+    .stars-f { color: #F59E0B; font-size: .8rem; }
+    .prov-rating { font-weight: 700; font-size: .82rem; color: var(--ink); }
+    .prov-revs { font-size: .76rem; color: var(--slate-lt); }
+
+    .prov-chips { display: flex; gap: .35rem; flex-wrap: wrap; margin-top: .75rem; }
+    .prov-loc { display: flex; align-items: center; gap: .3rem; margin-top: .75rem; font-size: .78rem; color: var(--slate); }
+
+    .prov-foot { display: flex; align-items: center; justify-content: space-between; padding: .9rem 1.25rem; border-top: 1px solid var(--line); margin-top: .2rem; }
+    .prov-rate { font-family: 'Clash Display', sans-serif; font-size: .95rem; font-weight: 700; color: var(--ink); }
+    .prov-rate span { font-size: .7rem; font-weight: 400; color: var(--slate-lt); font-family: 'Plus Jakarta Sans', sans-serif; }
+    .btn-book { padding: .45rem 1rem; font-size: .78rem; border-radius: 8px; background: var(--blue); color: #fff; border: none; font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 600; cursor: pointer; transition: all .18s; box-shadow: 0 3px 10px rgba(20,83,255,.28); }
+    .btn-book:hover { background: var(--blue-h); transform: translateY(-1px); }
+
+    /* empty state */
+    .empty-state { grid-column: 1 / -1; text-align: center; padding: 4rem 2rem; }
+    .empty-icon { font-size: 3rem; margin-bottom: 1rem; }
+    .empty-state h3 { font-family: 'Clash Display', sans-serif; font-size: 1.2rem; font-weight: 600; color: var(--ink); margin-bottom: .5rem; }
+    .empty-state p { font-size: .88rem; color: var(--slate); line-height: 1.7; max-width: 320px; margin: 0 auto 1.5rem; }
+
+    /* ── PAGINATION ── */
+    .pagination { display: flex; align-items: center; justify-content: center; gap: .4rem; margin-top: 2.5rem; }
+    .pg-btn { width: 36px; height: 36px; border-radius: 9px; border: 1.5px solid var(--line); background: var(--white); display: flex; align-items: center; justify-content: center; font-size: .82rem; font-weight: 600; color: var(--slate); cursor: pointer; transition: all .18s; }
+    .pg-btn:hover { border-color: var(--blue); color: var(--blue); }
+    .pg-btn.active { background: var(--blue); border-color: var(--blue); color: #fff; }
+    .pg-btn.arrow { font-size: 1rem; }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 960px) {
+      .browse-layout { grid-template-columns: 1fr; }
+      .filters { position: static; display: none; }
+      .filters.open { display: block; }
+      .provider-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 580px) {
+      .provider-grid { grid-template-columns: 1fr; }
+      .search-bar { flex-direction: column; border-radius: 12px; padding: 6px; gap: 4px; }
+      .sb-field, .sb-go { width: 100%; }
+      .sb-go { height: 46px; }
+      .sb-sep { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav id="nav">
+  <a class="logo" href="index.html"><span class="logo-dot"></span>Referro</a>
+  <ul class="nav-links">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="search.html" class="active">Services</a></li>
+    <li><a href="index.html#how">How It Works</a></li>
+    <li><a href="index.html#join">For Providers</a></li>
+  </ul>
+  <div class="nav-actions">
+    <a class="btn btn-ghost" href="#">Log in</a>
+    <a class="btn btn-blue" href="#">Get Started</a>
+  </div>
+</nav>
+
+<!-- PAGE HEADER -->
+<div class="page-header">
+  <div class="page-header-bg"></div>
+  <div class="page-header-inner">
+    <h1>Browse Service Providers</h1>
+    <p>Search across all categories and find the right professional for your needs.</p>
+  </div>
+</div>
+
+<!-- SEARCH BAR -->
+<div class="search-bar-wrap">
+  <div class="search-bar">
+    <div class="sb-field">
+      <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+      <input type="text" placeholder="Search by service or name..." id="searchInput" />
+    </div>
+    <div class="sb-sep"></div>
+    <div class="sb-field" style="max-width:160px">
+      <svg width="13" height="13" fill="none" stroke="rgba(255,255,255,.3)" stroke-width="2" viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 1 1 18 0Z"/><circle cx="12" cy="10" r="3"/></svg>
+      <input type="text" placeholder="City or area..." />
+    </div>
+    <button class="sb-go">Search</button>
+  </div>
+</div>
+
+<!-- BROWSE LAYOUT -->
+<div class="browse-layout">
+
+  <!-- FILTERS -->
+  <aside class="filters" id="filters">
+
+    <div class="filter-block">
+      <div class="filter-title">Category</div>
+      <div class="filter-options" id="catFilters">
+        <div class="filter-opt active" data-cat="all">
+          <span class="filter-opt-icon">🔍</span> All Services
+        </div>
+        <div class="filter-opt" data-cat="plumbing">
+          <span class="filter-opt-icon">🔧</span> Plumbing
+        </div>
+        <div class="filter-opt" data-cat="electrical">
+          <span class="filter-opt-icon">⚡</span> Electrical
+        </div>
+        <div class="filter-opt" data-cat="barbering">
+          <span class="filter-opt-icon">✂️</span> Barbering
+        </div>
+        <div class="filter-opt" data-cat="carpentry">
+          <span class="filter-opt-icon">🪵</span> Carpentry
+        </div>
+        <div class="filter-opt" data-cat="painting">
+          <span class="filter-opt-icon">🎨</span> Painting
+        </div>
+        <div class="filter-opt" data-cat="auto">
+          <span class="filter-opt-icon">🚗</span> Auto Repair
+        </div>
+        <div class="filter-opt" data-cat="cleaning">
+          <span class="filter-opt-icon">🏠</span> Cleaning
+        </div>
+        <div class="filter-opt" data-cat="tech">
+          <span class="filter-opt-icon">📱</span> Tech Repair
+        </div>
+      </div>
+    </div>
+
+    <div class="filter-divider"></div>
+
+    <div class="filter-block">
+      <div class="filter-title">Minimum Rating</div>
+      <div class="rating-opts">
+        <div class="rating-opt">
+          <input type="radio" name="rating" id="r-any" checked />
+          <label for="r-any">Any rating</label>
+        </div>
+        <div class="rating-opt">
+          <input type="radio" name="rating" id="r4" />
+          <label for="r4"><span class="stars-y">★★★★</span> 4.0+</label>
+        </div>
+        <div class="rating-opt">
+          <input type="radio" name="rating" id="r45" />
+          <label for="r45"><span class="stars-y">★★★★★</span> 4.5+</label>
+        </div>
+      </div>
+    </div>
+
+    <div class="filter-divider"></div>
+
+    <div class="filter-block">
+      <div class="filter-title">Availability</div>
+      <div class="filter-options">
+        <div class="filter-opt active" data-avail="any">Any time</div>
+        <div class="filter-opt" data-avail="today">Available today</div>
+        <div class="filter-opt" data-avail="weekend">Available weekends</div>
+      </div>
+    </div>
+
+    <div class="filter-divider"></div>
+
+    <button class="filter-reset">✕ Clear all filters</button>
+
+  </aside>
+
+  <!-- RESULTS -->
+  <div class="results-area">
+    <div class="results-header">
+      <div class="results-meta">Showing <strong>0 providers</strong> — be the first to sign up!</div>
+      <div class="sort-wrap">
+        <label>Sort by</label>
+        <select class="sort-select">
+          <option>Most Relevant</option>
+          <option>Top Rated</option>
+          <option>Newest</option>
+          <option>Price: Low to High</option>
+          <option>Price: High to Low</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="provider-grid" id="providerGrid">
+      <!-- Empty state -->
+      <div class="empty-state">
+        <div class="empty-icon">🔍</div>
+        <h3>No providers yet</h3>
+        <p>We're just getting started. Be among the first service providers to join Referro and reach customers near you.</p>
+        <a href="index.html#join" class="btn btn-blue">Join as a Provider</a>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-top">
+    <div class="footer-logo"><span class="footer-logo-dot"></span>Referro</div>
+    <div class="footer-links">
+      <a href="index.html">Home</a>
+      <a href="search.html">Services</a>
+      <a href="index.html#how">How It Works</a>
+      <a href="index.html#join">For Providers</a>
+      <a href="#">Contact</a>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span>© 2025 Referro Technologies Ltd.</span>
+    <span style="display:flex;gap:1.5rem">
+      <a href="#">Privacy Policy</a>
+      <a href="#">Terms of Use</a>
+    </span>
+  </div>
+</footer>
+
+<script src="assets/js/main.js"></script>
+<script>
+  // Category filter toggle
+  document.querySelectorAll('#catFilters .filter-opt').forEach(opt => {
+    opt.addEventListener('click', () => {
+      document.querySelectorAll('#catFilters .filter-opt').forEach(o => o.classList.remove('active'));
+      opt.classList.add('active');
+    });
+  });
+
+  // Availability filter toggle
+  document.querySelectorAll('[data-avail]').forEach(opt => {
+    opt.addEventListener('click', () => {
+      document.querySelectorAll('[data-avail]').forEach(o => o.classList.remove('active'));
+      opt.classList.add('active');
+    });
+  });
+
+  // Pre-select category from URL param
+  const params = new URLSearchParams(window.location.search);
+  const cat = params.get('cat');
+  if (cat) {
+    document.querySelectorAll('#catFilters .filter-opt').forEach(o => o.classList.remove('active'));
+    const match = document.querySelector(`[data-cat="${cat}"]`);
+    if (match) match.classList.add('active');
+  }
+
+  // Clear filters
+  document.querySelector('.filter-reset').addEventListener('click', () => {
+    document.querySelectorAll('#catFilters .filter-opt').forEach(o => o.classList.remove('active'));
+    document.querySelector('[data-cat="all"]').classList.add('active');
+    document.querySelectorAll('[data-avail]').forEach(o => o.classList.remove('active'));
+    document.querySelector('[data-avail="any"]').classList.add('active');
+    document.getElementById('r-any').checked = true;
+  });
+</script>
+</body>
+</html>
