@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sign Up / Log In — Referro</title>
+  <link rel="stylesheet" href="assets/css/style.css" />
+  <style>
+
+    body { background: var(--blue-ghost); }
+
+    /* ── SIMPLE NAV ── */
+    nav {
+      position: fixed; top: 0; inset-inline: 0; z-index: 100;
+      height: 66px; display: flex; align-items: center; justify-content: space-between;
+      padding: 0 5%;
+      background: rgba(255,255,255,.85); backdrop-filter: blur(18px);
+      border-bottom: 1px solid rgba(228,234,243,.8);
+    }
+
+    /* ── PAGE LAYOUT ── */
+    .auth-page {
+      min-height: 100svh;
+      display: grid; grid-template-columns: 1fr 1fr;
+    }
+
+    /* ── LEFT PANEL ── */
+    .auth-left {
+      background: var(--ink); position: relative;
+      overflow: hidden; display: flex; flex-direction: column;
+      justify-content: space-between; padding: 100px 5% 3rem;
+    }
+    .auth-left-bg {
+      position: absolute; inset: 0;
+      background:
+        radial-gradient(ellipse 80% 60% at 30% 0%, rgba(20,83,255,.4) 0%, transparent 60%),
+        radial-gradient(ellipse 50% 50% at 80% 100%, rgba(20,83,255,.2) 0%, transparent 55%);
+    }
+    .al-ring { position: absolute; border-radius: 50%; border: 1px solid rgba(255,255,255,.05); pointer-events: none; }
+    .al-r1 { width: 500px; height: 500px; top: -150px; right: -150px; animation: spin 50s linear infinite; }
+    .al-r2 { width: 750px; height: 750px; top: -300px; right: -300px; animation: spin 75s linear infinite reverse; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .auth-left-content { position: relative; z-index: 2; }
+    .auth-left-logo { font-family: 'Clash Display', sans-serif; font-size: 1.4rem; font-weight: 700; color: #fff; display: flex; align-items: center; gap: .3rem; margin-bottom: 3rem; }
+    .auth-left-logo-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--blue); margin-bottom: 3px; }
+
+    .auth-left h2 { font-size: clamp(1.8rem, 3vw, 2.6rem); font-weight: 700; color: #fff; letter-spacing: -.03em; line-height: 1.15; margin-bottom: 1rem; }
+    .auth-left h2 em { font-style: normal; color: transparent; background: linear-gradient(90deg, #6EA8FF, #C0D9FF); -webkit-background-clip: text; background-clip: text; }
+    .auth-left p { font-size: .9rem; color: rgba(255,255,255,.45); line-height: 1.75; max-width: 340px; }
+
+    .auth-perks { position: relative; z-index: 2; display: flex; flex-direction: column; gap: .75rem; margin-top: 3rem; }
+    .auth-perk { display: flex; align-items: center; gap: .75rem; }
+    .auth-perk-icon { width: 34px; height: 34px; border-radius: 9px; background: rgba(255,255,255,.07); border: 1px solid rgba(255,255,255,.1); display: flex; align-items: center; justify-content: center; font-size: .9rem; flex-shrink: 0; }
+    .auth-perk-text { font-size: .83rem; color: rgba(255,255,255,.55); }
+
+    .auth-left-footer { position: relative; z-index: 2; font-size: .75rem; color: rgba(255,255,255,.2); }
+
+    /* ── RIGHT PANEL ── */
+    .auth-right {
+      display: flex; align-items: center; justify-content: center;
+      padding: 100px 5% 3rem; background: var(--white);
+    }
+
+    .auth-box { width: 100%; max-width: 420px; }
+
+    /* tabs */
+    .auth-tabs {
+      display: flex; background: var(--blue-ghost);
+      border: 1px solid var(--line); border-radius: 12px;
+      padding: 4px; gap: 4px; margin-bottom: 2rem;
+    }
+    .auth-tab {
+      flex: 1; text-align: center; padding: .6rem;
+      border-radius: 9px; font-size: .86rem; font-weight: 600;
+      cursor: pointer; transition: all .2s; color: var(--slate);
+      border: none; background: transparent; font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+    .auth-tab.active { background: var(--white); color: var(--ink); box-shadow: 0 2px 8px rgba(6,14,30,.08); }
+
+    .auth-title { font-family: 'Clash Display', sans-serif; font-size: 1.5rem; font-weight: 700; color: var(--ink); letter-spacing: -.02em; margin-bottom: .4rem; }
+    .auth-sub { font-size: .85rem; color: var(--slate); margin-bottom: 1.75rem; line-height: 1.6; }
+
+    /* role selector */
+    .role-select { display: grid; grid-template-columns: 1fr 1fr; gap: .6rem; margin-bottom: 1.25rem; }
+    .role-opt {
+      border: 1.5px solid var(--line); border-radius: 11px;
+      padding: .85rem 1rem; cursor: pointer; transition: all .18s;
+      display: flex; align-items: center; gap: .6rem;
+    }
+    .role-opt:hover { border-color: var(--blue); background: var(--blue-ghost); }
+    .role-opt.active { border-color: var(--blue); background: var(--blue-ghost); }
+    .role-opt input { display: none; }
+    .role-icon { font-size: 1.2rem; }
+    .role-info { display: flex; flex-direction: column; }
+    .role-label { font-size: .82rem; font-weight: 700; color: var(--ink); }
+    .role-desc { font-size: .72rem; color: var(--slate-lt); margin-top: .1rem; }
+    .role-opt.active .role-label { color: var(--blue); }
+
+    /* form */
+    .auth-form { display: flex; flex-direction: column; gap: .9rem; }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: .75rem; }
+
+    .form-field { display: flex; flex-direction: column; gap: .35rem; }
+    .form-label { font-size: .78rem; font-weight: 600; color: var(--ink); }
+
+    .input-wrap { position: relative; display: flex; align-items: center; }
+    .input-wrap svg { position: absolute; left: .85rem; color: var(--slate-lt); pointer-events: none; flex-shrink: 0; }
+    .form-input {
+      width: 100%; border: 1.5px solid var(--line); border-radius: 10px;
+      padding: .7rem .9rem .7rem 2.4rem;
+      font-family: 'Plus Jakarta Sans', sans-serif; font-size: .86rem;
+      color: var(--ink); outline: none; transition: border-color .18s;
+      background: var(--white);
+    }
+    .form-input:focus { border-color: var(--blue); }
+    .form-input.no-icon { padding-left: .9rem; }
+
+    .input-toggle { position: absolute; right: .85rem; cursor: pointer; color: var(--slate-lt); background: none; border: none; padding: 0; display: flex; align-items: center; }
+    .input-toggle:hover { color: var(--slate); }
+
+    /* divider */
+    .auth-divider { display: flex; align-items: center; gap: .75rem; margin: .5rem 0; }
+    .auth-divider-line { flex: 1; height: 1px; background: var(--line); }
+    .auth-divider-text { font-size: .75rem; color: var(--slate-lt); white-space: nowrap; }
+
+    /* social */
+    .social-btns { display: flex; flex-direction: column; gap: .6rem; }
+    .social-btn {
+      display: flex; align-items: center; justify-content: center; gap: .6rem;
+      padding: .7rem; border-radius: 10px; border: 1.5px solid var(--line);
+      background: var(--white); font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: .84rem; font-weight: 600; color: var(--ink);
+      cursor: pointer; transition: all .18s;
+    }
+    .social-btn:hover { border-color: var(--slate); background: var(--blue-ghost); }
+    .social-icon { width: 18px; height: 18px; }
+
+    /* submit */
+    .auth-submit {
+      width: 100%; padding: .85rem; border-radius: 11px; border: none;
+      background: var(--blue); color: #fff;
+      font-family: 'Plus Jakarta Sans', sans-serif; font-size: .9rem; font-weight: 600;
+      cursor: pointer; transition: all .18s;
+      box-shadow: 0 4px 16px rgba(20,83,255,.3);
+    }
+    .auth-submit:hover { background: var(--blue-h); transform: translateY(-1px); }
+
+    .auth-terms { font-size: .74rem; color: var(--slate-lt); text-align: center; line-height: 1.6; margin-top: .25rem; }
+    .auth-terms a { color: var(--blue); text-decoration: none; }
+    .auth-terms a:hover { text-decoration: underline; }
+
+    .auth-switch { text-align: center; font-size: .82rem; color: var(--slate); margin-top: 1.25rem; }
+    .auth-switch a { color: var(--blue); font-weight: 600; text-decoration: none; cursor: pointer; }
+    .auth-switch a:hover { text-decoration: underline; }
+
+    /* forgot */
+    .forgot-link { font-size: .78rem; color: var(--blue); text-decoration: none; text-align: right; margin-top: -.4rem; }
+    .forgot-link:hover { text-decoration: underline; }
+
+    /* panel toggle */
+    .auth-panel { display: none; }
+    .auth-panel.active { display: flex; flex-direction: column; }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 860px) {
+      .auth-page { grid-template-columns: 1fr; }
+      .auth-left { display: none; }
+      .auth-right { padding: 100px 6% 3rem; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav id="nav">
+  <a class="logo" href="index.html"><span class="logo-dot"></span>Referro</a>
+  <a class="btn btn-ghost" href="index.html">← Back to home</a>
+</nav>
+
+<!-- PAGE -->
+<div class="auth-page">
+
+  <!-- LEFT -->
+  <div class="auth-left">
+    <div class="auth-left-bg"></div>
+    <div class="al-ring al-r1"></div>
+    <div class="al-ring al-r2"></div>
+
+    <div class="auth-left-content">
+      <div class="auth-left-logo"><span class="auth-left-logo-dot"></span>Referro</div>
+      <h2>The smarter way to find <em>skilled help.</em></h2>
+      <p>Join Referro and connect with verified service providers — or grow your business by reaching customers who need you.</p>
+
+      <div class="auth-perks">
+        <div class="auth-perk">
+          <div class="auth-perk-icon">🪪</div>
+          <div class="auth-perk-text">Every provider is ID verified before listing</div>
+        </div>
+        <div class="auth-perk">
+          <div class="auth-perk-icon">🛡️</div>
+          <div class="auth-perk-text">Bookings are protected end to end</div>
+        </div>
+        <div class="auth-perk">
+          <div class="auth-perk-icon">⚡</div>
+          <div class="auth-perk-text">Get connected in minutes, not days</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="auth-left-footer">© 2025 Referro Technologies Ltd.</div>
+  </div>
+
+  <!-- RIGHT -->
+  <div class="auth-right">
+    <div class="auth-box">
+
+      <!-- TABS -->
+      <div class="auth-tabs">
+        <button class="auth-tab active" id="tab-signup" onclick="switchTab('signup')">Create account</button>
+        <button class="auth-tab" id="tab-login" onclick="switchTab('login')">Log in</button>
+      </div>
+
+      <!-- SIGN UP PANEL -->
+      <div class="auth-panel active" id="panel-signup">
+        <div class="auth-title">Create your account</div>
+        <div class="auth-sub">Already have one? <a onclick="switchTab('login')">Log in instead →</a></div>
+
+        <!-- Role selector -->
+        <div class="role-select">
+          <label class="role-opt active" id="role-customer">
+            <input type="radio" name="role" value="customer" checked />
+            <span class="role-icon">🔍</span>
+            <span class="role-info">
+              <span class="role-label">Customer</span>
+              <span class="role-desc">Find providers</span>
+            </span>
+          </label>
+          <label class="role-opt" id="role-provider">
+            <input type="radio" name="role" value="provider" />
+            <span class="role-icon">🔧</span>
+            <span class="role-info">
+              <span class="role-label">Provider</span>
+              <span class="role-desc">Offer services</span>
+            </span>
+          </label>
+        </div>
+
+        <div class="auth-form">
+          <div class="form-row">
+            <div class="form-field">
+              <label class="form-label">First name</label>
+              <div class="input-wrap">
+                <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                <input type="text" class="form-input" placeholder="First name" />
+              </div>
+            </div>
+            <div class="form-field">
+              <label class="form-label">Last name</label>
+              <div class="input-wrap">
+                <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                <input type="text" class="form-input" placeholder="Last name" />
+              </div>
+            </div>
+          </div>
+
+          <div class="form-field">
+            <label class="form-label">Email address</label>
+            <div class="input-wrap">
+              <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+              <input type="email" class="form-input" placeholder="you@example.com" />
+            </div>
+          </div>
+
+          <div class="form-field">
+            <label class="form-label">Phone number</label>
+            <div class="input-wrap">
+              <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 13a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.6 2.23h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 9.91a16 16 0 0 0 6.06 6.06l.91-.91a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+              <input type="tel" class="form-input" placeholder="+234 000 0000 000" />
+            </div>
+          </div>
+
+          <div class="form-field">
+            <label class="form-label">Password</label>
+            <div class="input-wrap">
+              <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+              <input type="password" class="form-input" id="signup-pw" placeholder="Min. 8 characters" />
+              <button class="input-toggle" onclick="togglePw('signup-pw', this)" type="button">
+                <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
+              </button>
+            </div>
+          </div>
+
+          <button class="auth-submit">Create Account</button>
+          <p class="auth-terms">By creating an account you agree to our <a href="#">Terms of Use</a> and <a href="#">Privacy Policy</a>.</p>
+        </div>
+
+        <div class="auth-divider"><div class="auth-divider-line"></div><span class="auth-divider-text">or continue with</span><div class="auth-divider-line"></div></div>
+
+        <div class="social-btns">
+          <button class="social-btn">
+            <svg class="social-icon" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+            Continue with Google
+          </button>
+        </div>
+      </div>
+
+      <!-- LOG IN PANEL -->
+      <div class="auth-panel" id="panel-login">
+        <div class="auth-title">Welcome back</div>
+        <div class="auth-sub">Don't have an account? <a onclick="switchTab('signup')">Sign up →</a></div>
+
+        <div class="auth-form">
+          <div class="form-field">
+            <label class="form-label">Email address</label>
+            <div class="input-wrap">
+              <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+              <input type="email" class="form-input" placeholder="you@example.com" />
+            </div>
+          </div>
+
+          <div class="form-field">
+            <label class="form-label">Password</label>
+            <div class="input-wrap">
+              <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+              <input type="password" class="form-input" id="login-pw" placeholder="Your password" />
+              <button class="input-toggle" onclick="togglePw('login-pw', this)" type="button">
+                <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
+              </button>
+            </div>
+            <a href="#" class="forgot-link">Forgot password?</a>
+          </div>
+
+          <button class="auth-submit">Log In</button>
+        </div>
+
+        <div class="auth-divider"><div class="auth-divider-line"></div><span class="auth-divider-text">or continue with</span><div class="auth-divider-line"></div></div>
+
+        <div class="social-btns">
+          <button class="social-btn">
+            <svg class="social-icon" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+            Continue with Google
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script src="assets/js/main.js"></script>
+<script>
+  // Tab switch
+  function switchTab(tab) {
+    document.querySelectorAll('.auth-tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.auth-panel').forEach(p => p.classList.remove('active'));
+    document.getElementById('tab-' + tab).classList.add('active');
+    document.getElementById('panel-' + tab).classList.add('active');
+  }
+
+  // Role toggle
+  document.querySelectorAll('.role-opt').forEach(opt => {
+    opt.addEventListener('click', () => {
+      document.querySelectorAll('.role-opt').forEach(o => o.classList.remove('active'));
+      opt.classList.add('active');
+    });
+  });
+
+  // Password show/hide
+  function togglePw(id, btn) {
+    const input = document.getElementById(id);
+    input.type = input.type === 'password' ? 'text' : 'password';
+  }
+</script>
+</body>
+</html>
