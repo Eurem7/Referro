@@ -9,7 +9,6 @@
 
     body { background: var(--blue-ghost); }
 
-    /* ── SIMPLE NAV ── */
     nav {
       position: fixed; top: 0; inset-inline: 0; z-index: 100;
       height: 66px; display: flex; align-items: center; justify-content: space-between;
@@ -79,23 +78,9 @@
     .auth-tab.active { background: var(--white); color: var(--ink); box-shadow: 0 2px 8px rgba(6,14,30,.08); }
 
     .auth-title { font-family: 'Clash Display', sans-serif; font-size: 1.5rem; font-weight: 700; color: var(--ink); letter-spacing: -.02em; margin-bottom: .4rem; }
-    .auth-sub { font-size: .85rem; color: var(--slate); margin-bottom: 1.75rem; line-height: 1.6; }
-
-    /* role selector */
-    .role-select { display: grid; grid-template-columns: 1fr 1fr; gap: .6rem; margin-bottom: 1.25rem; }
-    .role-opt {
-      border: 1.5px solid var(--line); border-radius: 11px;
-      padding: .85rem 1rem; cursor: pointer; transition: all .18s;
-      display: flex; align-items: center; gap: .6rem;
-    }
-    .role-opt:hover { border-color: var(--blue); background: var(--blue-ghost); }
-    .role-opt.active { border-color: var(--blue); background: var(--blue-ghost); }
-    .role-opt input { display: none; }
-    .role-icon { font-size: 1.2rem; }
-    .role-info { display: flex; flex-direction: column; }
-    .role-label { font-size: .82rem; font-weight: 700; color: var(--ink); }
-    .role-desc { font-size: .72rem; color: var(--slate-lt); margin-top: .1rem; }
-    .role-opt.active .role-label { color: var(--blue); }
+    .auth-sub { font-size: .85rem; color: var(--slate); margin-bottom: 1.75rem; line-height: 1.7; }
+    .auth-sub a { color: var(--blue); font-weight: 600; text-decoration: none; cursor: pointer; }
+    .auth-sub a:hover { text-decoration: underline; }
 
     /* form */
     .auth-form { display: flex; flex-direction: column; gap: .9rem; }
@@ -114,7 +99,6 @@
       background: var(--white);
     }
     .form-input:focus { border-color: var(--blue); }
-    .form-input.no-icon { padding-left: .9rem; }
 
     .input-toggle { position: absolute; right: .85rem; cursor: pointer; color: var(--slate-lt); background: none; border: none; padding: 0; display: flex; align-items: center; }
     .input-toggle:hover { color: var(--slate); }
@@ -150,13 +134,25 @@
     .auth-terms a { color: var(--blue); text-decoration: none; }
     .auth-terms a:hover { text-decoration: underline; }
 
-    .auth-switch { text-align: center; font-size: .82rem; color: var(--slate); margin-top: 1.25rem; }
-    .auth-switch a { color: var(--blue); font-weight: 600; text-decoration: none; cursor: pointer; }
-    .auth-switch a:hover { text-decoration: underline; }
-
     /* forgot */
     .forgot-link { font-size: .78rem; color: var(--blue); text-decoration: none; text-align: right; margin-top: -.4rem; }
     .forgot-link:hover { text-decoration: underline; }
+
+    /* provider banner */
+    .provider-banner {
+      display: flex; align-items: center; justify-content: space-between;
+      background: var(--blue-ghost); border: 1.5px solid var(--blue-pale);
+      border-radius: 11px; padding: .85rem 1rem; margin-bottom: 1.5rem;
+      gap: .75rem;
+    }
+    .provider-banner-text { font-size: .82rem; color: var(--slate); line-height: 1.5; }
+    .provider-banner-text strong { color: var(--ink); display: block; font-size: .84rem; margin-bottom: .15rem; }
+    .provider-banner a {
+      flex-shrink: 0; padding: .45rem 1rem; border-radius: 8px;
+      background: var(--blue); color: #fff; font-size: .78rem; font-weight: 600;
+      text-decoration: none; white-space: nowrap; transition: all .18s;
+    }
+    .provider-banner a:hover { background: var(--blue-h); }
 
     /* panel toggle */
     .auth-panel { display: none; }
@@ -168,6 +164,9 @@
       .auth-left { display: none; }
       .auth-right { padding: 100px 6% 3rem; }
     }
+    @media (max-width: 420px) {
+      .form-row { grid-template-columns: 1fr; }
+    }
   </style>
 </head>
 <body>
@@ -178,7 +177,6 @@
   <a class="btn btn-ghost" href="index.html">← Back to home</a>
 </nav>
 
-<!-- PAGE -->
 <div class="auth-page">
 
   <!-- LEFT -->
@@ -221,29 +219,21 @@
         <button class="auth-tab" id="tab-login" onclick="switchTab('login')">Log in</button>
       </div>
 
-      <!-- SIGN UP PANEL -->
+      <!-- ── SIGN UP PANEL ── -->
       <div class="auth-panel active" id="panel-signup">
-        <div class="auth-title">Create your account</div>
-        <div class="auth-sub">Already have one? <a onclick="switchTab('login')">Log in instead →</a></div>
 
-        <!-- Role selector -->
-        <div class="role-select">
-          <label class="role-opt active" id="role-customer">
-            <input type="radio" name="role" value="customer" checked />
-            <span class="role-icon">🔍</span>
-            <span class="role-info">
-              <span class="role-label">Customer</span>
-              <span class="role-desc">Find providers</span>
-            </span>
-          </label>
-          <label class="role-opt" id="role-provider">
-            <input type="radio" name="role" value="provider" />
-            <span class="role-icon">🔧</span>
-            <span class="role-info">
-              <span class="role-label">Provider</span>
-              <span class="role-desc">Offer services</span>
-            </span>
-          </label>
+        <div class="auth-title">Create your account</div>
+        <div class="auth-sub">
+          Already have one? <a onclick="switchTab('login')">Log in instead →</a>
+        </div>
+
+        <!-- Provider nudge -->
+        <div class="provider-banner">
+          <div class="provider-banner-text">
+            <strong>Want to offer your services?</strong>
+            Apply to join as a provider — it's free.
+          </div>
+          <a href="onboarding.html">Join as Provider →</a>
         </div>
 
         <div class="auth-form">
@@ -285,7 +275,7 @@
             <div class="input-wrap">
               <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
               <input type="password" class="form-input" id="signup-pw" placeholder="Min. 8 characters" />
-              <button class="input-toggle" onclick="togglePw('signup-pw', this)" type="button">
+              <button class="input-toggle" onclick="togglePw('signup-pw')" type="button">
                 <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
               </button>
             </div>
@@ -295,7 +285,11 @@
           <p class="auth-terms">By creating an account you agree to our <a href="#">Terms of Use</a> and <a href="#">Privacy Policy</a>.</p>
         </div>
 
-        <div class="auth-divider"><div class="auth-divider-line"></div><span class="auth-divider-text">or continue with</span><div class="auth-divider-line"></div></div>
+        <div class="auth-divider">
+          <div class="auth-divider-line"></div>
+          <span class="auth-divider-text">or continue with</span>
+          <div class="auth-divider-line"></div>
+        </div>
 
         <div class="social-btns">
           <button class="social-btn">
@@ -305,10 +299,14 @@
         </div>
       </div>
 
-      <!-- LOG IN PANEL -->
+      <!-- ── LOG IN PANEL ── -->
       <div class="auth-panel" id="panel-login">
+
         <div class="auth-title">Welcome back</div>
-        <div class="auth-sub">Don't have an account? <a onclick="switchTab('signup')">Sign up →</a></div>
+        <div class="auth-sub">
+          Don't have an account? <a onclick="switchTab('signup')">Sign up →</a><br/>
+          Are you a provider? <a href="onboarding.html">Apply here →</a>
+        </div>
 
         <div class="auth-form">
           <div class="form-field">
@@ -324,7 +322,7 @@
             <div class="input-wrap">
               <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
               <input type="password" class="form-input" id="login-pw" placeholder="Your password" />
-              <button class="input-toggle" onclick="togglePw('login-pw', this)" type="button">
+              <button class="input-toggle" onclick="togglePw('login-pw')" type="button">
                 <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
               </button>
             </div>
@@ -334,7 +332,11 @@
           <button class="auth-submit">Log In</button>
         </div>
 
-        <div class="auth-divider"><div class="auth-divider-line"></div><span class="auth-divider-text">or continue with</span><div class="auth-divider-line"></div></div>
+        <div class="auth-divider">
+          <div class="auth-divider-line"></div>
+          <span class="auth-divider-text">or continue with</span>
+          <div class="auth-divider-line"></div>
+        </div>
 
         <div class="social-btns">
           <button class="social-btn">
@@ -350,7 +352,6 @@
 
 <script src="assets/js/main.js"></script>
 <script>
-  // Tab switch
   function switchTab(tab) {
     document.querySelectorAll('.auth-tab').forEach(t => t.classList.remove('active'));
     document.querySelectorAll('.auth-panel').forEach(p => p.classList.remove('active'));
@@ -358,16 +359,7 @@
     document.getElementById('panel-' + tab).classList.add('active');
   }
 
-  // Role toggle
-  document.querySelectorAll('.role-opt').forEach(opt => {
-    opt.addEventListener('click', () => {
-      document.querySelectorAll('.role-opt').forEach(o => o.classList.remove('active'));
-      opt.classList.add('active');
-    });
-  });
-
-  // Password show/hide
-  function togglePw(id, btn) {
+  function togglePw(id) {
     const input = document.getElementById(id);
     input.type = input.type === 'password' ? 'text' : 'password';
   }
