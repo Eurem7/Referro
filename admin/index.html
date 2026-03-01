@@ -3,627 +3,446 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Admin — Referro</title>
+  <title>Admin Dashboard — Referro</title>
   <link rel="stylesheet" href="../assets/css/style.css" />
   <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Plus Jakarta Sans', sans-serif; background: #F4F7FF; color: #060E1E; display: flex; min-height: 100vh; }
 
-    body { background: var(--blue-ghost); }
-
-    /* ── LAYOUT ── */
-    .admin-wrap { display: grid; grid-template-columns: 240px 1fr; min-height: 100svh; }
-
-    /* ── SIDEBAR ── */
+    /* ─── SIDEBAR ─── */
     .sidebar {
-      background: var(--ink); position: fixed; top: 0; left: 0;
-      width: 240px; height: 100svh; overflow-y: auto;
-      display: flex; flex-direction: column; z-index: 200;
-      border-right: 1px solid rgba(255,255,255,.06);
+      width: 230px; flex-shrink: 0;
+      background: #060E1E;
+      display: flex; flex-direction: column;
+      position: fixed; top: 0; left: 0; height: 100vh;
+      overflow-y: auto; z-index: 100;
+      border-right: 1px solid rgba(255,255,255,.05);
     }
-
-    .sidebar-logo {
-      padding: 1.5rem 1.5rem 1rem;
-      font-family: 'Clash Display', sans-serif; font-size: 1.3rem; font-weight: 700;
-      color: #fff; display: flex; align-items: center; gap: .3rem;
-      border-bottom: 1px solid rgba(255,255,255,.06); margin-bottom: .5rem;
+    .sb-logo {
+      padding: 1.4rem 1.25rem 1.1rem;
+      font-family: 'Clash Display', sans-serif; font-size: 1.25rem; font-weight: 700;
+      color: #fff; display: flex; align-items: center; gap: .4rem;
+      border-bottom: 1px solid rgba(255,255,255,.06);
     }
-    .sidebar-logo-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--blue); margin-bottom: 3px; }
-    .sidebar-logo-badge { font-size: .62rem; font-weight: 700; background: var(--blue); color: #fff; padding: .1rem .4rem; border-radius: 4px; margin-left: .2rem; letter-spacing: .04em; }
-
-    .sidebar-section { padding: .75rem 1rem .25rem; font-size: .65rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: rgba(255,255,255,.2); }
-
-    .sidebar-nav { display: flex; flex-direction: column; gap: .15rem; padding: 0 .75rem; }
-    .nav-item {
-      display: flex; align-items: center; gap: .7rem;
-      padding: .65rem .75rem; border-radius: 9px; cursor: pointer;
-      font-size: .84rem; font-weight: 500; color: rgba(255,255,255,.45);
-      text-decoration: none; transition: all .18s; border: none; background: transparent;
-      font-family: 'Plus Jakarta Sans', sans-serif; width: 100%; text-align: left;
+    .sb-logo-dot { width: 6px; height: 6px; border-radius: 50%; background: #1453FF; margin-bottom: 3px; flex-shrink: 0; }
+    .sb-admin-tag { font-size: .6rem; font-weight: 700; letter-spacing: .06em; background: #1453FF; color: #fff; padding: .1rem .4rem; border-radius: 4px; margin-left: .15rem; }
+    .sb-section { padding: 1.1rem 1.25rem .3rem; font-size: .63rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: rgba(255,255,255,.2); }
+    .sb-nav { display: flex; flex-direction: column; gap: .1rem; padding: 0 .6rem; }
+    .sb-item {
+      display: flex; align-items: center; gap: .65rem;
+      padding: .6rem .7rem; border-radius: 8px;
+      font-size: .83rem; font-weight: 500; color: rgba(255,255,255,.42);
+      cursor: pointer; transition: all .16s;
+      background: none; border: none; width: 100%; text-align: left;
+      font-family: 'Plus Jakarta Sans', sans-serif; text-decoration: none;
     }
-    .nav-item:hover { background: rgba(255,255,255,.06); color: rgba(255,255,255,.8); }
-    .nav-item.active { background: rgba(20,83,255,.25); color: #fff; }
-    .nav-item.active .nav-icon { color: var(--blue-light, #6EA8FF); }
-    .nav-icon { font-size: 1rem; width: 18px; text-align: center; }
-    .nav-badge { margin-left: auto; background: var(--blue); color: #fff; font-size: .65rem; font-weight: 700; padding: .1rem .45rem; border-radius: 100px; }
-    .nav-badge.orange { background: #F59E0B; }
+    .sb-item:hover { background: rgba(255,255,255,.05); color: rgba(255,255,255,.78); }
+    .sb-item.active { background: rgba(20,83,255,.22); color: #fff; }
+    .sb-icon { font-size: .95rem; width: 16px; text-align: center; flex-shrink: 0; }
+    .sb-badge { margin-left: auto; background: #F59E0B; color: #fff; font-size: .62rem; font-weight: 700; padding: .08rem .42rem; border-radius: 100px; }
+    .sb-badge.blue { background: #1453FF; }
+    .sb-footer { margin-top: auto; padding: .85rem .6rem 1.25rem; border-top: 1px solid rgba(255,255,255,.06); }
+    .sb-user { display: flex; align-items: center; gap: .6rem; padding: .55rem .7rem; border-radius: 8px; }
+    .sb-av { width: 30px; height: 30px; border-radius: 50%; background: #1453FF; display: flex; align-items: center; justify-content: center; font-size: .72rem; font-weight: 700; color: #fff; flex-shrink: 0; }
+    .sb-user-name { font-size: .8rem; font-weight: 600; color: #fff; }
+    .sb-user-role { font-size: .68rem; color: rgba(255,255,255,.3); }
 
-    .sidebar-footer {
-      margin-top: auto; padding: 1rem .75rem 1.5rem;
-      border-top: 1px solid rgba(255,255,255,.06);
-    }
-    .admin-profile { display: flex; align-items: center; gap: .65rem; padding: .65rem .75rem; border-radius: 9px; }
-    .admin-av { width: 32px; height: 32px; border-radius: 50%; background: var(--blue); display: flex; align-items: center; justify-content: center; font-size: .78rem; font-weight: 700; color: #fff; flex-shrink: 0; }
-    .admin-info { overflow: hidden; }
-    .admin-name { font-size: .82rem; font-weight: 600; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .admin-role { font-size: .7rem; color: rgba(255,255,255,.35); }
+    /* ─── MAIN ─── */
+    .main { margin-left: 230px; flex: 1; padding: 2rem 2.25rem; min-height: 100vh; }
 
-    /* ── MAIN ── */
-    .main { margin-left: 240px; padding: 2rem 2.5rem; min-height: 100svh; }
+    /* ─── TOPBAR ─── */
+    .topbar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.75rem; gap: 1rem; flex-wrap: wrap; }
+    .topbar-title { font-family: 'Clash Display', sans-serif; font-size: 1.35rem; font-weight: 700; color: #060E1E; letter-spacing: -.02em; }
+    .topbar-sub { font-size: .82rem; color: #637089; margin-top: .15rem; }
+    .topbar-right { display: flex; align-items: center; gap: .6rem; }
+    .search-bar { display: flex; align-items: center; gap: .45rem; background: #fff; border: 1.5px solid #E4EAF3; border-radius: 9px; padding: .48rem .85rem; }
+    .search-bar input { border: none; outline: none; font-family: 'Plus Jakarta Sans', sans-serif; font-size: .83rem; color: #060E1E; background: transparent; width: 200px; }
+    .search-bar input::placeholder { color: #9AAABF; }
+    .search-bar svg { color: #9AAABF; flex-shrink: 0; }
+    .icon-btn { width: 36px; height: 36px; border-radius: 8px; border: 1.5px solid #E4EAF3; background: #fff; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: .95rem; transition: all .16s; }
+    .icon-btn:hover { border-color: #1453FF; background: #EBF1FF; }
 
-    /* ── TOP BAR ── */
-    .topbar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem; }
-    .topbar-left h1 { font-family: 'Clash Display', sans-serif; font-size: 1.4rem; font-weight: 700; color: var(--ink); letter-spacing: -.02em; }
-    .topbar-left p { font-size: .83rem; color: var(--slate); margin-top: .2rem; }
-    .topbar-right { display: flex; align-items: center; gap: .65rem; }
+    /* ─── STAT CARDS ─── */
+    .stats { display: grid; grid-template-columns: repeat(4,1fr); gap: .85rem; margin-bottom: 1.75rem; }
+    .stat { background: #fff; border: 1.5px solid #E4EAF3; border-radius: 14px; padding: 1.25rem 1.35rem; transition: box-shadow .2s, transform .2s; }
+    .stat:hover { box-shadow: 0 8px 28px rgba(6,14,30,.07); transform: translateY(-2px); }
+    .stat-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: .85rem; }
+    .stat-icon { width: 38px; height: 38px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1rem; }
+    .ic-blue   { background: #EBF1FF; }
+    .ic-green  { background: #ECFDF5; }
+    .ic-amber  { background: #FFF7ED; }
+    .ic-purple { background: #F5F3FF; }
+    .stat-tag { font-size: .68rem; font-weight: 700; padding: .15rem .5rem; border-radius: 5px; }
+    .tag-new     { background: #EBF1FF; color: #1453FF; }
+    .tag-pending { background: #FFF7ED; color: #D97706; }
+    .stat-num { font-family: 'Clash Display', sans-serif; font-size: 1.9rem; font-weight: 700; color: #060E1E; line-height: 1; }
+    .stat-label { font-size: .76rem; color: #637089; margin-top: .28rem; }
 
-    .search-input {
-      display: flex; align-items: center; gap: .5rem;
-      background: var(--white); border: 1.5px solid var(--line);
-      border-radius: 10px; padding: .5rem .85rem; min-width: 220px;
-    }
-    .search-input svg { color: var(--slate-lt); flex-shrink: 0; }
-    .search-input input { border: none; outline: none; font-family: 'Plus Jakarta Sans', sans-serif; font-size: .84rem; color: var(--ink); background: transparent; width: 100%; }
-    .search-input input::placeholder { color: var(--slate-lt); }
+    /* ─── CONTENT GRID ─── */
+    .content-grid { display: grid; grid-template-columns: 1fr 300px; gap: 1.25rem; }
 
-    .icon-btn { width: 38px; height: 38px; border-radius: 9px; border: 1.5px solid var(--line); background: var(--white); display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 1rem; transition: all .18s; }
-    .icon-btn:hover { border-color: var(--blue); background: var(--blue-ghost); }
+    /* ─── CARD ─── */
+    .card { background: #fff; border: 1.5px solid #E4EAF3; border-radius: 14px; overflow: hidden; }
+    .card-head { display: flex; align-items: center; justify-content: space-between; padding: 1.1rem 1.35rem; border-bottom: 1px solid #E4EAF3; flex-wrap: wrap; gap: .6rem; }
+    .card-title { font-family: 'Clash Display', sans-serif; font-size: .92rem; font-weight: 700; color: #060E1E; }
+    .tab-row { display: flex; gap: .35rem; }
+    .tab-btn { padding: .28rem .72rem; border-radius: 6px; font-size: .74rem; font-weight: 600; cursor: pointer; border: 1.5px solid #E4EAF3; background: transparent; color: #637089; font-family: 'Plus Jakarta Sans', sans-serif; transition: all .16s; }
+    .tab-btn:hover { border-color: #1453FF; color: #1453FF; }
+    .tab-btn.active { background: #EBF1FF; border-color: #1453FF; color: #1453FF; }
 
-    /* ── STAT CARDS ── */
-    .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; margin-bottom: 2rem; }
-    .stat-card {
-      background: var(--white); border: 1.5px solid var(--line);
-      border-radius: var(--radius-lg); padding: 1.4rem 1.5rem;
-      transition: all .2s;
-    }
-    .stat-card:hover { box-shadow: var(--shadow-md); transform: translateY(-2px); }
-    .stat-card-top { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: .9rem; }
-    .stat-icon { width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; }
-    .si-blue   { background: var(--blue-pale); }
-    .si-green  { background: #ECFDF5; }
-    .si-amber  { background: #FFF7ED; }
-    .si-purple { background: #F5F3FF; }
-    .stat-trend { font-size: .72rem; font-weight: 700; padding: .18rem .5rem; border-radius: 6px; }
-    .trend-up   { background: #ECFDF5; color: #16A34A; }
-    .trend-down { background: #FFF1F2; color: #DC2626; }
-    .trend-new  { background: var(--blue-pale); color: var(--blue); }
-    .stat-val { font-family: 'Clash Display', sans-serif; font-size: 1.8rem; font-weight: 700; color: var(--ink); line-height: 1; }
-    .stat-label { font-size: .78rem; color: var(--slate); margin-top: .3rem; }
-
-    /* ── CONTENT GRID ── */
-    .content-grid { display: grid; grid-template-columns: 1fr 340px; gap: 1.5rem; }
-
-    /* ── TABLE CARD ── */
-    .table-card { background: var(--white); border: 1.5px solid var(--line); border-radius: var(--radius-lg); overflow: hidden; }
-    .table-header { display: flex; align-items: center; justify-content: space-between; padding: 1.25rem 1.5rem; border-bottom: 1px solid var(--line); flex-wrap: wrap; gap: .75rem; }
-    .table-title { font-family: 'Clash Display', sans-serif; font-size: .95rem; font-weight: 700; color: var(--ink); }
-    .table-filters { display: flex; gap: .4rem; }
-    .tfilter { padding: .3rem .75rem; border-radius: 7px; font-size: .76rem; font-weight: 600; cursor: pointer; border: 1.5px solid var(--line); background: transparent; color: var(--slate); font-family: 'Plus Jakarta Sans', sans-serif; transition: all .18s; }
-    .tfilter:hover { border-color: var(--blue); color: var(--blue); }
-    .tfilter.active { background: var(--blue-ghost); border-color: var(--blue); color: var(--blue); }
-
+    /* ─── TABLE ─── */
     table { width: 100%; border-collapse: collapse; }
-    thead { background: var(--blue-ghost); }
-    th { padding: .7rem 1.2rem; text-align: left; font-size: .72rem; font-weight: 700; color: var(--slate); text-transform: uppercase; letter-spacing: .07em; white-space: nowrap; }
-    td { padding: .85rem 1.2rem; font-size: .83rem; color: var(--ink); border-bottom: 1px solid var(--line); vertical-align: middle; }
+    thead { background: #F4F7FF; }
+    th { padding: .65rem 1.2rem; text-align: left; font-size: .7rem; font-weight: 700; color: #637089; text-transform: uppercase; letter-spacing: .07em; white-space: nowrap; }
+    td { padding: .82rem 1.2rem; font-size: .82rem; color: #060E1E; border-bottom: 1px solid #E4EAF3; vertical-align: middle; }
     tr:last-child td { border-bottom: none; }
-    tr:hover td { background: var(--blue-ghost); }
-
-    .provider-cell { display: flex; align-items: center; gap: .65rem; }
-    .prov-av-sm { width: 34px; height: 34px; border-radius: 50%; background: var(--blue-pale); display: flex; align-items: center; justify-content: center; font-family: 'Clash Display', sans-serif; font-size: .72rem; font-weight: 700; color: var(--blue); flex-shrink: 0; }
-    .prov-cell-name { font-weight: 600; color: var(--ink); font-size: .83rem; }
-    .prov-cell-cat { font-size: .72rem; color: var(--slate-lt); }
-
-    .status-pill { display: inline-flex; align-items: center; gap: .3rem; padding: .22rem .65rem; border-radius: 100px; font-size: .72rem; font-weight: 700; }
-    .sp-pending  { background: #FFF7ED; color: #D97706; }
-    .sp-approved { background: #ECFDF5; color: #16A34A; }
-    .sp-rejected { background: #FFF1F2; color: #DC2626; }
-    .sp-dot { width: 5px; height: 5px; border-radius: 50%; background: currentColor; }
-
-    .action-btns { display: flex; gap: .4rem; }
-    .act-btn { padding: .28rem .7rem; border-radius: 6px; font-size: .72rem; font-weight: 600; cursor: pointer; border: 1.5px solid; font-family: 'Plus Jakarta Sans', sans-serif; transition: all .18s; }
-    .act-approve { border-color: #16A34A; color: #16A34A; background: transparent; }
+    tr:hover td { background: #F8FAFF; }
+    .prov-cell { display: flex; align-items: center; gap: .6rem; }
+    .prov-av { width: 32px; height: 32px; border-radius: 50%; background: #EBF1FF; display: flex; align-items: center; justify-content: center; font-family: 'Clash Display', sans-serif; font-size: .7rem; font-weight: 700; color: #1453FF; flex-shrink: 0; }
+    .prov-name { font-weight: 600; font-size: .82rem; }
+    .prov-sub  { font-size: .7rem; color: #9AAABF; }
+    .pill { display: inline-flex; align-items: center; gap: .28rem; padding: .2rem .6rem; border-radius: 100px; font-size: .7rem; font-weight: 700; }
+    .pill-dot { width: 5px; height: 5px; border-radius: 50%; background: currentColor; }
+    .pill-pending  { background: #FFF7ED; color: #D97706; }
+    .pill-approved { background: #ECFDF5; color: #16A34A; }
+    .pill-rejected { background: #FFF1F2; color: #DC2626; }
+    .pill-active   { background: #ECFDF5; color: #16A34A; }
+    .act-row { display: flex; gap: .35rem; }
+    .act { padding: .25rem .65rem; border-radius: 6px; font-size: .7rem; font-weight: 600; cursor: pointer; border: 1.5px solid; font-family: 'Plus Jakarta Sans', sans-serif; transition: all .16s; background: transparent; }
+    .act-approve { border-color: #16A34A; color: #16A34A; }
     .act-approve:hover { background: #ECFDF5; }
-    .act-reject  { border-color: #DC2626; color: #DC2626; background: transparent; }
-    .act-reject:hover { background: #FFF1F2; }
-    .act-view { border-color: var(--line); color: var(--slate); background: transparent; }
-    .act-view:hover { border-color: var(--blue); color: var(--blue); }
+    .act-reject  { border-color: #DC2626; color: #DC2626; }
+    .act-reject:hover  { background: #FFF1F2; }
+    .act-view    { border-color: #E4EAF3; color: #637089; }
+    .act-view:hover    { border-color: #1453FF; color: #1453FF; }
 
-    /* empty table */
-    .table-empty { text-align: center; padding: 3.5rem 2rem; }
-    .table-empty-icon { font-size: 2.5rem; margin-bottom: .75rem; }
-    .table-empty h3 { font-family: 'Clash Display', sans-serif; font-size: 1rem; font-weight: 700; color: var(--ink); margin-bottom: .4rem; }
-    .table-empty p { font-size: .82rem; color: var(--slate); }
+    /* ─── EMPTY STATE ─── */
+    .empty { text-align: center; padding: 3.5rem 2rem; }
+    .empty-ico { font-size: 2.2rem; margin-bottom: .65rem; }
+    .empty h3 { font-family: 'Clash Display', sans-serif; font-size: .98rem; font-weight: 700; color: #060E1E; margin-bottom: .35rem; }
+    .empty p  { font-size: .81rem; color: #637089; line-height: 1.7; max-width: 280px; margin: 0 auto; }
 
-    /* ── RIGHT COLUMN ── */
-    .right-col { display: flex; flex-direction: column; gap: 1.25rem; }
+    /* ─── RIGHT PANELS ─── */
+    .right-col { display: flex; flex-direction: column; gap: 1.1rem; }
+    .feed { display: flex; flex-direction: column; }
+    .feed-empty { text-align: center; padding: 1.75rem 1.25rem; font-size: .8rem; color: #9AAABF; }
+    .qs-list { display: flex; flex-direction: column; }
+    .qs-row { display: flex; align-items: center; justify-content: space-between; padding: .8rem 1.2rem; border-bottom: 1px solid #E4EAF3; }
+    .qs-row:last-child { border-bottom: none; }
+    .qs-label { display: flex; align-items: center; gap: .45rem; font-size: .81rem; color: #637089; }
+    .qs-num { font-family: 'Clash Display', sans-serif; font-size: .92rem; font-weight: 700; color: #060E1E; }
 
-    .panel-card { background: var(--white); border: 1.5px solid var(--line); border-radius: var(--radius-lg); overflow: hidden; }
-    .panel-header { padding: 1.1rem 1.25rem; border-bottom: 1px solid var(--line); display: flex; align-items: center; justify-content: space-between; }
-    .panel-title { font-family: 'Clash Display', sans-serif; font-size: .9rem; font-weight: 700; color: var(--ink); }
-    .panel-link { font-size: .76rem; color: var(--blue); text-decoration: none; font-weight: 600; }
-    .panel-link:hover { text-decoration: underline; }
+    /* ─── SECTIONS ─── */
+    .section { display: none; }
+    .section.active { display: block; }
 
-    /* activity feed */
-    .activity-feed { display: flex; flex-direction: column; }
-    .activity-item { display: flex; gap: .75rem; padding: .85rem 1.25rem; border-bottom: 1px solid var(--line); }
-    .activity-item:last-child { border-bottom: none; }
-    .activity-ico { width: 32px; height: 32px; border-radius: 9px; display: flex; align-items: center; justify-content: center; font-size: .85rem; flex-shrink: 0; margin-top: .1rem; }
-    .ai-blue   { background: var(--blue-pale); }
-    .ai-green  { background: #ECFDF5; }
-    .ai-amber  { background: #FFF7ED; }
-    .activity-content { flex: 1; }
-    .activity-text { font-size: .82rem; color: var(--ink); line-height: 1.5; }
-    .activity-text strong { font-weight: 600; }
-    .activity-time { font-size: .72rem; color: var(--slate-lt); margin-top: .2rem; }
-
-    .feed-empty { text-align: center; padding: 2rem; font-size: .83rem; color: var(--slate-lt); }
-
-    /* quick stats panel */
-    .quick-stats { display: flex; flex-direction: column; }
-    .qs-item { display: flex; align-items: center; justify-content: space-between; padding: .85rem 1.25rem; border-bottom: 1px solid var(--line); }
-    .qs-item:last-child { border-bottom: none; }
-    .qs-label { display: flex; align-items: center; gap: .5rem; font-size: .83rem; color: var(--slate); }
-    .qs-icon { font-size: .9rem; }
-    .qs-val { font-family: 'Clash Display', sans-serif; font-size: .95rem; font-weight: 700; color: var(--ink); }
-
-    /* ── PAGE SECTIONS ── */
-    .page-section { display: none; }
-    .page-section.active { display: block; }
-
-    /* ── RESPONSIVE ── */
-    @media (max-width: 1100px) {
-      .content-grid { grid-template-columns: 1fr; }
-      .stats-grid { grid-template-columns: repeat(2, 1fr); }
-    }
-    @media (max-width: 860px) {
-      .sidebar { transform: translateX(-100%); transition: transform .3s; }
-      .sidebar.open { transform: translateX(0); }
-      .main { margin-left: 0; padding: 1.25rem; }
-      .stats-grid { grid-template-columns: repeat(2, 1fr); }
-    }
-    @media (max-width: 540px) {
-      .stats-grid { grid-template-columns: 1fr 1fr; }
-      .topbar { flex-direction: column; align-items: flex-start; }
-    }
+    /* ─── RESPONSIVE ─── */
+    @media (max-width: 1100px) { .content-grid { grid-template-columns: 1fr; } }
+    @media (max-width: 960px)  { .stats { grid-template-columns: repeat(2,1fr); } }
+    @media (max-width: 780px)  { .sidebar { transform: translateX(-100%); } .main { margin-left: 0; padding: 1.25rem; } }
+    @media (max-width: 500px)  { .stats { grid-template-columns: 1fr 1fr; } }
   </style>
 </head>
 <body>
 
-<div class="admin-wrap">
+<!-- ═══ SIDEBAR ═══ -->
+<aside class="sidebar" id="sidebar">
+  <div class="sb-logo">
+    <span class="sb-logo-dot"></span>Referro
+    <span class="sb-admin-tag">ADMIN</span>
+  </div>
 
-  <!-- SIDEBAR -->
-  <aside class="sidebar" id="sidebar">
-    <div class="sidebar-logo">
-      <span class="sidebar-logo-dot"></span>Referro
-      <span class="sidebar-logo-badge">ADMIN</span>
+  <div class="sb-section">Main</div>
+  <div class="sb-nav">
+    <button class="sb-item active" onclick="show('overview',this)"><span class="sb-icon">📊</span>Overview</button>
+    <button class="sb-item" onclick="show('providers',this)"><span class="sb-icon">🔧</span>Providers<span class="sb-badge">0</span></button>
+    <button class="sb-item" onclick="show('customers',this)"><span class="sb-icon">👥</span>Customers</button>
+    <button class="sb-item" onclick="show('bookings',this)"><span class="sb-icon">📅</span>Bookings</button>
+  </div>
+
+  <div class="sb-section">Manage</div>
+  <div class="sb-nav">
+    <button class="sb-item" onclick="show('applications',this)"><span class="sb-icon">📋</span>Applications<span class="sb-badge">0</span></button>
+    <button class="sb-item" onclick="show('categories',this)"><span class="sb-icon">🗂️</span>Categories</button>
+    <button class="sb-item" onclick="show('reports',this)"><span class="sb-icon">🚩</span>Reports</button>
+  </div>
+
+  <div class="sb-section">System</div>
+  <div class="sb-nav">
+    <button class="sb-item" onclick="show('settings',this)"><span class="sb-icon">⚙️</span>Settings</button>
+    <a class="sb-item" href="../index.html"><span class="sb-icon">↗</span>View Site</a>
+  </div>
+
+  <div class="sb-footer">
+    <div class="sb-user">
+      <div class="sb-av">A</div>
+      <div>
+        <div class="sb-user-name">Admin</div>
+        <div class="sb-user-role">Super Admin</div>
+      </div>
     </div>
+  </div>
+</aside>
 
-    <div class="sidebar-section">Main</div>
-    <nav class="sidebar-nav">
-      <button class="nav-item active" onclick="showSection('overview')">
-        <span class="nav-icon">📊</span> Overview
-      </button>
-      <button class="nav-item" onclick="showSection('providers')">
-        <span class="nav-icon">🔧</span> Providers
-        <span class="nav-badge orange">0</span>
-      </button>
-      <button class="nav-item" onclick="showSection('customers')">
-        <span class="nav-icon">👥</span> Customers
-      </button>
-      <button class="nav-item" onclick="showSection('bookings')">
-        <span class="nav-icon">📅</span> Bookings
-      </button>
-    </nav>
+<!-- ═══ MAIN ═══ -->
+<main class="main">
 
-    <div class="sidebar-section" style="margin-top:.75rem">Manage</div>
-    <nav class="sidebar-nav">
-      <button class="nav-item" onclick="showSection('applications')">
-        <span class="nav-icon">📋</span> Applications
-        <span class="nav-badge">0</span>
-      </button>
-      <button class="nav-item" onclick="showSection('categories')">
-        <span class="nav-icon">🗂️</span> Categories
-      </button>
-      <button class="nav-item" onclick="showSection('reports')">
-        <span class="nav-icon">🚩</span> Reports
-      </button>
-    </nav>
-
-    <div class="sidebar-section" style="margin-top:.75rem">System</div>
-    <nav class="sidebar-nav">
-      <button class="nav-item" onclick="showSection('settings')">
-        <span class="nav-icon">⚙️</span> Settings
-      </button>
-    </nav>
-
-    <div class="sidebar-footer">
-      <div class="admin-profile">
-        <div class="admin-av">AD</div>
-        <div class="admin-info">
-          <div class="admin-name">Admin</div>
-          <div class="admin-role">Super Admin</div>
-        </div>
+  <!-- OVERVIEW -->
+  <div class="section active" id="sec-overview">
+    <div class="topbar">
+      <div>
+        <div class="topbar-title">Overview</div>
+        <div class="topbar-sub">Welcome back. Here's what's happening on Referro.</div>
       </div>
-      <a href="../index.html" class="nav-item" style="margin-top:.25rem">
-        <span class="nav-icon">↗</span> View Site
-      </a>
-    </div>
-  </aside>
-
-  <!-- MAIN -->
-  <main class="main">
-
-    <!-- ── OVERVIEW ── -->
-    <div class="page-section active" id="section-overview">
-      <div class="topbar">
-        <div class="topbar-left">
-          <h1>Overview</h1>
-          <p>Welcome back. Here's what's happening on Referro.</p>
+      <div class="topbar-right">
+        <div class="search-bar">
+          <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+          <input type="text" placeholder="Search..." />
         </div>
-        <div class="topbar-right">
-          <div class="search-input">
-            <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-            <input type="text" placeholder="Search anything..." />
-          </div>
-          <div class="icon-btn">🔔</div>
-        </div>
-      </div>
-
-      <!-- STATS -->
-      <div class="stats-grid">
-        <div class="stat-card sr d1">
-          <div class="stat-card-top">
-            <div class="stat-icon si-blue">👥</div>
-            <span class="stat-trend trend-new">New</span>
-          </div>
-          <div class="stat-val">0</div>
-          <div class="stat-label">Total Users</div>
-        </div>
-        <div class="stat-card sr d2">
-          <div class="stat-card-top">
-            <div class="stat-icon si-green">🔧</div>
-            <span class="stat-trend trend-new">New</span>
-          </div>
-          <div class="stat-val">0</div>
-          <div class="stat-label">Active Providers</div>
-        </div>
-        <div class="stat-card sr d3">
-          <div class="stat-card-top">
-            <div class="stat-icon si-amber">📅</div>
-            <span class="stat-trend trend-new">New</span>
-          </div>
-          <div class="stat-val">0</div>
-          <div class="stat-label">Total Bookings</div>
-        </div>
-        <div class="stat-card sr d4">
-          <div class="stat-card-top">
-            <div class="stat-icon si-purple">📋</div>
-            <span class="stat-trend orange" style="background:#FFF7ED;color:#D97706">Pending</span>
-          </div>
-          <div class="stat-val">0</div>
-          <div class="stat-label">Pending Applications</div>
-        </div>
-      </div>
-
-      <div class="content-grid">
-        <!-- Recent Applications Table -->
-        <div class="table-card sr">
-          <div class="table-header">
-            <div class="table-title">Recent Provider Applications</div>
-            <div class="table-filters">
-              <button class="tfilter active">All</button>
-              <button class="tfilter">Pending</button>
-              <button class="tfilter">Approved</button>
-            </div>
-          </div>
-
-          <div class="table-empty">
-            <div class="table-empty-icon">📋</div>
-            <h3>No applications yet</h3>
-            <p>Provider applications will appear here once people start signing up.</p>
-          </div>
-        </div>
-
-        <!-- Right col -->
-        <div class="right-col">
-
-          <!-- Activity Feed -->
-          <div class="panel-card sr">
-            <div class="panel-header">
-              <div class="panel-title">Recent Activity</div>
-            </div>
-            <div class="activity-feed">
-              <div class="feed-empty">No activity yet — things will show up here as users join.</div>
-            </div>
-          </div>
-
-          <!-- Platform Health -->
-          <div class="panel-card sr">
-            <div class="panel-header">
-              <div class="panel-title">Platform Status</div>
-            </div>
-            <div class="quick-stats">
-              <div class="qs-item">
-                <div class="qs-label"><span class="qs-icon">👥</span> Total Users</div>
-                <div class="qs-val">0</div>
-              </div>
-              <div class="qs-item">
-                <div class="qs-label"><span class="qs-icon">✅</span> Verified Providers</div>
-                <div class="qs-val">0</div>
-              </div>
-              <div class="qs-item">
-                <div class="qs-label"><span class="qs-icon">⏳</span> Pending Review</div>
-                <div class="qs-val">0</div>
-              </div>
-              <div class="qs-item">
-                <div class="qs-label"><span class="qs-icon">📅</span> Bookings Today</div>
-                <div class="qs-val">0</div>
-              </div>
-              <div class="qs-item">
-                <div class="qs-label"><span class="qs-icon">🚩</span> Open Reports</div>
-                <div class="qs-val">0</div>
-              </div>
-            </div>
-          </div>
-
-        </div>
+        <div class="icon-btn">🔔</div>
       </div>
     </div>
 
-    <!-- ── PROVIDERS ── -->
-    <div class="page-section" id="section-providers">
-      <div class="topbar">
-        <div class="topbar-left">
-          <h1>Providers</h1>
-          <p>Manage all service providers on the platform.</p>
-        </div>
-        <div class="topbar-right">
-          <div class="search-input">
-            <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-            <input type="text" placeholder="Search providers..." />
-          </div>
-        </div>
+    <div class="stats">
+      <div class="stat">
+        <div class="stat-top"><div class="stat-icon ic-blue">👥</div><span class="stat-tag tag-new">New</span></div>
+        <div class="stat-num">0</div><div class="stat-label">Total Users</div>
       </div>
-      <div class="table-card">
-        <div class="table-header">
-          <div class="table-title">All Providers</div>
-          <div class="table-filters">
-            <button class="tfilter active">All</button>
-            <button class="tfilter">Active</button>
-            <button class="tfilter">Suspended</button>
-          </div>
-        </div>
-        <div class="table-empty">
-          <div class="table-empty-icon">🔧</div>
-          <h3>No providers yet</h3>
-          <p>Approved providers will appear here once applications come in.</p>
-        </div>
+      <div class="stat">
+        <div class="stat-top"><div class="stat-icon ic-green">🔧</div><span class="stat-tag tag-new">New</span></div>
+        <div class="stat-num">0</div><div class="stat-label">Active Providers</div>
+      </div>
+      <div class="stat">
+        <div class="stat-top"><div class="stat-icon ic-amber">📅</div><span class="stat-tag tag-new">New</span></div>
+        <div class="stat-num">0</div><div class="stat-label">Total Bookings</div>
+      </div>
+      <div class="stat">
+        <div class="stat-top"><div class="stat-icon ic-purple">📋</div><span class="stat-tag tag-pending">Pending</span></div>
+        <div class="stat-num">0</div><div class="stat-label">Pending Applications</div>
       </div>
     </div>
 
-    <!-- ── CUSTOMERS ── -->
-    <div class="page-section" id="section-customers">
-      <div class="topbar">
-        <div class="topbar-left">
-          <h1>Customers</h1>
-          <p>All registered customers on the platform.</p>
-        </div>
-        <div class="topbar-right">
-          <div class="search-input">
-            <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-            <input type="text" placeholder="Search customers..." />
+    <div class="content-grid">
+      <div class="card">
+        <div class="card-head">
+          <div class="card-title">Recent Applications</div>
+          <div class="tab-row">
+            <button class="tab-btn active">All</button>
+            <button class="tab-btn">Pending</button>
+            <button class="tab-btn">Approved</button>
           </div>
         </div>
-      </div>
-      <div class="table-card">
-        <div class="table-header"><div class="table-title">All Customers</div></div>
-        <div class="table-empty">
-          <div class="table-empty-icon">👥</div>
-          <h3>No customers yet</h3>
-          <p>Registered customers will appear here once people start signing up.</p>
-        </div>
-      </div>
-    </div>
-
-    <!-- ── BOOKINGS ── -->
-    <div class="page-section" id="section-bookings">
-      <div class="topbar">
-        <div class="topbar-left">
-          <h1>Bookings</h1>
-          <p>View and manage all booking requests.</p>
-        </div>
-      </div>
-      <div class="table-card">
-        <div class="table-header">
-          <div class="table-title">All Bookings</div>
-          <div class="table-filters">
-            <button class="tfilter active">All</button>
-            <button class="tfilter">Pending</button>
-            <button class="tfilter">Confirmed</button>
-            <button class="tfilter">Completed</button>
-          </div>
-        </div>
-        <div class="table-empty">
-          <div class="table-empty-icon">📅</div>
-          <h3>No bookings yet</h3>
-          <p>Booking requests will appear here once customers start using the platform.</p>
-        </div>
-      </div>
-    </div>
-
-    <!-- ── APPLICATIONS ── -->
-    <div class="page-section" id="section-applications">
-      <div class="topbar">
-        <div class="topbar-left">
-          <h1>Applications</h1>
-          <p>Review and approve provider applications.</p>
-        </div>
-      </div>
-      <div class="table-card">
-        <div class="table-header">
-          <div class="table-title">Provider Applications</div>
-          <div class="table-filters">
-            <button class="tfilter active">All</button>
-            <button class="tfilter">Pending</button>
-            <button class="tfilter">Approved</button>
-            <button class="tfilter">Rejected</button>
-          </div>
-        </div>
-
-        <!-- When applications exist, table rows look like this:
-        <table>
-          <thead>
-            <tr>
-              <th>Provider</th>
-              <th>Category</th>
-              <th>Location</th>
-              <th>Applied</th>
-              <th>Status</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>
-                <div class="provider-cell">
-                  <div class="prov-av-sm">AO</div>
-                  <div>
-                    <div class="prov-cell-name">Adewale Okonkwo</div>
-                    <div class="prov-cell-cat">Electrician</div>
-                  </div>
-                </div>
-              </td>
-              <td>Electrical</td>
-              <td>Lagos</td>
-              <td>Today</td>
-              <td><span class="status-pill sp-pending"><span class="sp-dot"></span>Pending</span></td>
-              <td>
-                <div class="action-btns">
-                  <button class="act-btn act-approve">Approve</button>
-                  <button class="act-btn act-reject">Reject</button>
-                  <button class="act-btn act-view">View</button>
-                </div>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-        -->
-
-        <div class="table-empty">
-          <div class="table-empty-icon">📋</div>
+        <div class="empty">
+          <div class="empty-ico">📋</div>
           <h3>No applications yet</h3>
-          <p>When providers complete the onboarding form, their applications will appear here for review.</p>
+          <p>Provider applications will appear here once people start signing up via the onboarding form.</p>
+        </div>
+      </div>
+
+      <div class="right-col">
+        <div class="card">
+          <div class="card-head"><div class="card-title">Recent Activity</div></div>
+          <div class="feed">
+            <div class="feed-empty">No activity yet — things will show up here as users join.</div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-head"><div class="card-title">Platform Status</div></div>
+          <div class="qs-list">
+            <div class="qs-row"><div class="qs-label"><span>👥</span> Total Users</div><div class="qs-num">0</div></div>
+            <div class="qs-row"><div class="qs-label"><span>✅</span> Verified Providers</div><div class="qs-num">0</div></div>
+            <div class="qs-row"><div class="qs-label"><span>⏳</span> Pending Review</div><div class="qs-num">0</div></div>
+            <div class="qs-row"><div class="qs-label"><span>📅</span> Bookings Today</div><div class="qs-num">0</div></div>
+            <div class="qs-row"><div class="qs-label"><span>🚩</span> Open Reports</div><div class="qs-num">0</div></div>
+          </div>
         </div>
       </div>
     </div>
+  </div>
 
-    <!-- ── CATEGORIES ── -->
-    <div class="page-section" id="section-categories">
-      <div class="topbar">
-        <div class="topbar-left">
-          <h1>Categories</h1>
-          <p>Manage service categories shown on the platform.</p>
-        </div>
-        <div class="topbar-right">
-          <button class="btn btn-blue btn-sm">+ Add Category</button>
+  <!-- PROVIDERS -->
+  <div class="section" id="sec-providers">
+    <div class="topbar">
+      <div><div class="topbar-title">Providers</div><div class="topbar-sub">Manage all service providers on the platform.</div></div>
+      <div class="topbar-right">
+        <div class="search-bar">
+          <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+          <input type="text" placeholder="Search providers..." />
         </div>
       </div>
-      <div class="table-card">
-        <div class="table-header"><div class="table-title">All Categories</div></div>
+    </div>
+    <div class="card">
+      <div class="card-head">
+        <div class="card-title">All Providers</div>
+        <div class="tab-row">
+          <button class="tab-btn active">All</button>
+          <button class="tab-btn">Active</button>
+          <button class="tab-btn">Suspended</button>
+        </div>
+      </div>
+      <div class="empty">
+        <div class="empty-ico">🔧</div>
+        <h3>No providers yet</h3>
+        <p>Approved providers will appear here once applications come in and are reviewed.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- CUSTOMERS -->
+  <div class="section" id="sec-customers">
+    <div class="topbar">
+      <div><div class="topbar-title">Customers</div><div class="topbar-sub">All registered customers on the platform.</div></div>
+      <div class="topbar-right">
+        <div class="search-bar">
+          <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+          <input type="text" placeholder="Search customers..." />
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-head"><div class="card-title">All Customers</div></div>
+      <div class="empty">
+        <div class="empty-ico">👥</div>
+        <h3>No customers yet</h3>
+        <p>Registered customers will appear here once people start signing up.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- BOOKINGS -->
+  <div class="section" id="sec-bookings">
+    <div class="topbar">
+      <div><div class="topbar-title">Bookings</div><div class="topbar-sub">View and manage all booking requests.</div></div>
+    </div>
+    <div class="card">
+      <div class="card-head">
+        <div class="card-title">All Bookings</div>
+        <div class="tab-row">
+          <button class="tab-btn active">All</button>
+          <button class="tab-btn">Pending</button>
+          <button class="tab-btn">Confirmed</button>
+          <button class="tab-btn">Completed</button>
+        </div>
+      </div>
+      <div class="empty">
+        <div class="empty-ico">📅</div>
+        <h3>No bookings yet</h3>
+        <p>Booking requests will appear here once customers start using the platform.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- APPLICATIONS -->
+  <div class="section" id="sec-applications">
+    <div class="topbar">
+      <div><div class="topbar-title">Applications</div><div class="topbar-sub">Review and approve provider applications.</div></div>
+    </div>
+    <div class="card">
+      <div class="card-head">
+        <div class="card-title">Provider Applications</div>
+        <div class="tab-row">
+          <button class="tab-btn active">All</button>
+          <button class="tab-btn">Pending</button>
+          <button class="tab-btn">Approved</button>
+          <button class="tab-btn">Rejected</button>
+        </div>
+      </div>
+      <!--
+        When backend data exists, replace the empty state with this table:
         <table>
-          <thead>
-            <tr>
-              <th>Category</th>
-              <th>Slug</th>
-              <th>Providers</th>
-              <th>Status</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
+          <thead><tr><th>Provider</th><th>Category</th><th>Location</th><th>Applied</th><th>Status</th><th>Actions</th></tr></thead>
           <tbody>
-            <tr><td><div class="provider-cell"><span style="font-size:1.1rem">🔧</span><span>Plumbing</span></div></td><td style="color:var(--slate-lt)">plumbing</td><td>0</td><td><span class="status-pill sp-approved"><span class="sp-dot"></span>Active</span></td><td><div class="action-btns"><button class="act-btn act-view">Edit</button></div></td></tr>
-            <tr><td><div class="provider-cell"><span style="font-size:1.1rem">⚡</span><span>Electrical</span></div></td><td style="color:var(--slate-lt)">electrical</td><td>0</td><td><span class="status-pill sp-approved"><span class="sp-dot"></span>Active</span></td><td><div class="action-btns"><button class="act-btn act-view">Edit</button></div></td></tr>
-            <tr><td><div class="provider-cell"><span style="font-size:1.1rem">✂️</span><span>Barbering</span></div></td><td style="color:var(--slate-lt)">barbering</td><td>0</td><td><span class="status-pill sp-approved"><span class="sp-dot"></span>Active</span></td><td><div class="action-btns"><button class="act-btn act-view">Edit</button></div></td></tr>
-            <tr><td><div class="provider-cell"><span style="font-size:1.1rem">🪵</span><span>Carpentry</span></div></td><td style="color:var(--slate-lt)">carpentry</td><td>0</td><td><span class="status-pill sp-approved"><span class="sp-dot"></span>Active</span></td><td><div class="action-btns"><button class="act-btn act-view">Edit</button></div></td></tr>
-            <tr><td><div class="provider-cell"><span style="font-size:1.1rem">🎨</span><span>Painting</span></div></td><td style="color:var(--slate-lt)">painting</td><td>0</td><td><span class="status-pill sp-approved"><span class="sp-dot"></span>Active</span></td><td><div class="action-btns"><button class="act-btn act-view">Edit</button></div></td></tr>
-            <tr><td><div class="provider-cell"><span style="font-size:1.1rem">🚗</span><span>Auto Repair</span></div></td><td style="color:var(--slate-lt)">auto</td><td>0</td><td><span class="status-pill sp-approved"><span class="sp-dot"></span>Active</span></td><td><div class="action-btns"><button class="act-btn act-view">Edit</button></div></td></tr>
-            <tr><td><div class="provider-cell"><span style="font-size:1.1rem">🏠</span><span>Cleaning</span></div></td><td style="color:var(--slate-lt)">cleaning</td><td>0</td><td><span class="status-pill sp-approved"><span class="sp-dot"></span>Active</span></td><td><div class="action-btns"><button class="act-btn act-view">Edit</button></div></td></tr>
-            <tr><td><div class="provider-cell"><span style="font-size:1.1rem">📱</span><span>Tech Repair</span></div></td><td style="color:var(--slate-lt)">tech</td><td>0</td><td><span class="status-pill sp-approved"><span class="sp-dot"></span>Active</span></td><td><div class="action-btns"><button class="act-btn act-view">Edit</button></div></td></tr>
+            <tr>
+              <td><div class="prov-cell"><div class="prov-av">AO</div><div><div class="prov-name">Adewale O.</div><div class="prov-sub">Electrician</div></div></div></td>
+              <td>Electrical</td><td>Lagos</td><td>Today</td>
+              <td><span class="pill pill-pending"><span class="pill-dot"></span>Pending</span></td>
+              <td><div class="act-row"><button class="act act-approve">Approve</button><button class="act act-reject">Reject</button><button class="act act-view">View</button></div></td>
+            </tr>
           </tbody>
         </table>
+      -->
+      <div class="empty">
+        <div class="empty-ico">📋</div>
+        <h3>No applications yet</h3>
+        <p>When providers complete the onboarding form, their applications will appear here for review.</p>
       </div>
     </div>
+  </div>
 
-    <!-- ── REPORTS ── -->
-    <div class="page-section" id="section-reports">
-      <div class="topbar">
-        <div class="topbar-left">
-          <h1>Reports</h1>
-          <p>User-submitted reports and flags.</p>
-        </div>
-      </div>
-      <div class="table-card">
-        <div class="table-header"><div class="table-title">Open Reports</div></div>
-        <div class="table-empty">
-          <div class="table-empty-icon">🚩</div>
-          <h3>No reports</h3>
-          <p>User-submitted reports will appear here.</p>
-        </div>
+  <!-- CATEGORIES -->
+  <div class="section" id="sec-categories">
+    <div class="topbar">
+      <div><div class="topbar-title">Categories</div><div class="topbar-sub">Manage service categories shown on the platform.</div></div>
+      <div class="topbar-right"><button class="btn btn-blue btn-sm">+ Add Category</button></div>
+    </div>
+    <div class="card">
+      <div class="card-head"><div class="card-title">All Categories</div></div>
+      <table>
+        <thead>
+          <tr><th>Category</th><th>Slug</th><th>Providers</th><th>Status</th><th>Action</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><div class="prov-cell"><span>🔧</span><span>Plumbing</span></div></td><td style="color:#9AAABF;font-size:.78rem">plumbing</td><td>0</td><td><span class="pill pill-active"><span class="pill-dot"></span>Active</span></td><td><button class="act act-view">Edit</button></td></tr>
+          <tr><td><div class="prov-cell"><span>⚡</span><span>Electrical</span></div></td><td style="color:#9AAABF;font-size:.78rem">electrical</td><td>0</td><td><span class="pill pill-active"><span class="pill-dot"></span>Active</span></td><td><button class="act act-view">Edit</button></td></tr>
+          <tr><td><div class="prov-cell"><span>✂️</span><span>Barbering</span></div></td><td style="color:#9AAABF;font-size:.78rem">barbering</td><td>0</td><td><span class="pill pill-active"><span class="pill-dot"></span>Active</span></td><td><button class="act act-view">Edit</button></td></tr>
+          <tr><td><div class="prov-cell"><span>🪵</span><span>Carpentry</span></div></td><td style="color:#9AAABF;font-size:.78rem">carpentry</td><td>0</td><td><span class="pill pill-active"><span class="pill-dot"></span>Active</span></td><td><button class="act act-view">Edit</button></td></tr>
+          <tr><td><div class="prov-cell"><span>🎨</span><span>Painting</span></div></td><td style="color:#9AAABF;font-size:.78rem">painting</td><td>0</td><td><span class="pill pill-active"><span class="pill-dot"></span>Active</span></td><td><button class="act act-view">Edit</button></td></tr>
+          <tr><td><div class="prov-cell"><span>🚗</span><span>Auto Repair</span></div></td><td style="color:#9AAABF;font-size:.78rem">auto</td><td>0</td><td><span class="pill pill-active"><span class="pill-dot"></span>Active</span></td><td><button class="act act-view">Edit</button></td></tr>
+          <tr><td><div class="prov-cell"><span>🏠</span><span>Cleaning</span></div></td><td style="color:#9AAABF;font-size:.78rem">cleaning</td><td>0</td><td><span class="pill pill-active"><span class="pill-dot"></span>Active</span></td><td><button class="act act-view">Edit</button></td></tr>
+          <tr><td><div class="prov-cell"><span>📱</span><span>Tech Repair</span></div></td><td style="color:#9AAABF;font-size:.78rem">tech</td><td>0</td><td><span class="pill pill-active"><span class="pill-dot"></span>Active</span></td><td><button class="act act-view">Edit</button></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- REPORTS -->
+  <div class="section" id="sec-reports">
+    <div class="topbar">
+      <div><div class="topbar-title">Reports</div><div class="topbar-sub">User-submitted reports and flags.</div></div>
+    </div>
+    <div class="card">
+      <div class="card-head"><div class="card-title">Open Reports</div></div>
+      <div class="empty">
+        <div class="empty-ico">🚩</div>
+        <h3>No reports</h3>
+        <p>User-submitted reports will appear here.</p>
       </div>
     </div>
+  </div>
 
-    <!-- ── SETTINGS ── -->
-    <div class="page-section" id="section-settings">
-      <div class="topbar">
-        <div class="topbar-left">
-          <h1>Settings</h1>
-          <p>Platform configuration and preferences.</p>
-        </div>
-      </div>
-      <div class="table-card" style="padding:1.5rem 2rem">
-        <div class="table-empty" style="padding:2rem">
-          <div class="table-empty-icon">⚙️</div>
-          <h3>Settings coming soon</h3>
-          <p>Platform settings will be configurable here once the backend is connected.</p>
-        </div>
+  <!-- SETTINGS -->
+  <div class="section" id="sec-settings">
+    <div class="topbar">
+      <div><div class="topbar-title">Settings</div><div class="topbar-sub">Platform configuration and preferences.</div></div>
+    </div>
+    <div class="card">
+      <div class="empty" style="padding:3.5rem 2rem">
+        <div class="empty-ico">⚙️</div>
+        <h3>Settings coming soon</h3>
+        <p>Platform settings will be configurable here once the backend is connected.</p>
       </div>
     </div>
+  </div>
 
-  </main>
-</div>
+</main>
 
 <script>
-  function showSection(name) {
-    document.querySelectorAll('.page-section').forEach(s => s.classList.remove('active'));
-    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-    document.getElementById('section-' + name).classList.add('active');
-    event.currentTarget.classList.add('active');
+  function show(name, el) {
+    document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+    document.querySelectorAll('.sb-item').forEach(i => i.classList.remove('active'));
+    document.getElementById('sec-' + name).classList.add('active');
+    el.classList.add('active');
   }
 
-  // Table filter toggle
-  document.querySelectorAll('.table-filters').forEach(group => {
-    group.querySelectorAll('.tfilter').forEach(btn => {
+  document.querySelectorAll('.tab-row').forEach(row => {
+    row.querySelectorAll('.tab-btn').forEach(btn => {
       btn.addEventListener('click', () => {
-        group.querySelectorAll('.tfilter').forEach(b => b.classList.remove('active'));
+        row.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
       });
     });
   });
-
-  // Scroll reveal
-  const obs = new IntersectionObserver(entries => {
-    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); obs.unobserve(e.target); } });
-  }, { threshold: 0.1 });
-  document.querySelectorAll('.sr').forEach(el => obs.observe(el));
 </script>
 </body>
 </html>
